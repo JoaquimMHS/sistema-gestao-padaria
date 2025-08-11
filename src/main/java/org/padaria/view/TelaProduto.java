@@ -19,7 +19,6 @@ public class TelaProduto extends JFrame {
     private final ProdutoService produtoService;
     private final String arquivoCSV = "produtos.csv";
 
-    // Componentes da Interface
     private JTable tabelaProdutos;
     private DefaultTableModel tableModel;
     private JButton btnAdicionar, btnEditar, btnRemover;
@@ -41,8 +40,6 @@ public class TelaProduto extends JFrame {
     }
 
     private void inicializarComponentes() {
-        // ... (Nenhuma alteração nesta parte do código)
-        // --- Painel do Topo (Pesquisa e Botão Adicionar) ---
         JPanel panelTopo = new JPanel(new BorderLayout(10, 10));
         panelTopo.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
@@ -55,7 +52,6 @@ public class TelaProduto extends JFrame {
         btnAdicionar.setForeground(Color.WHITE);
         panelTopo.add(btnAdicionar, BorderLayout.EAST);
 
-        // --- Tabela de Produtos (Centro) ---
         String[] colunas = {"Código", "Descrição", "Estoque Atual", "Estoque Mínimo", "Valor de Custo", "Valor de Venda"};
         tableModel = new DefaultTableModel(colunas, 0) {
             @Override
@@ -71,7 +67,6 @@ public class TelaProduto extends JFrame {
         panelBotoes.add(btnEditar);
         panelBotoes.add(btnRemover);
 
-        // --- Adiciona os painéis à janela ---
         setLayout(new BorderLayout());
         add(panelTopo, BorderLayout.NORTH);
         add(scrollPane, BorderLayout.CENTER);
@@ -87,17 +82,14 @@ public class TelaProduto extends JFrame {
         });
 
         btnAdicionar.addActionListener(e -> {
-            // Abre a tela de cadastro para um NOVO produto (passando null)
             TelaCadastroProduto telaCadastro = new TelaCadastroProduto(this, produtoService, this::atualizarTabela, null);
             telaCadastro.setVisible(true);
         });
 
-        // --- NOVO: Listener do botão Editar ---
         btnEditar.addActionListener(e -> editarProduto());
 
         btnRemover.addActionListener(e -> removerProduto());
 
-        // --- NOVO: Listener do campo de Pesquisa ---
         txtPesquisar.getDocument().addDocumentListener(new DocumentListener() {
             @Override
             public void insertUpdate(DocumentEvent e) { filtrarTabela(); }
@@ -108,7 +100,6 @@ public class TelaProduto extends JFrame {
         });
     }
 
-    // O método agora aceita uma lista para poder exibir a lista completa ou a filtrada
     private void carregarDadosNaTabela(List<Produto> produtos) {
         tableModel.setRowCount(0);
         for (Produto p : produtos) {
@@ -123,33 +114,29 @@ public class TelaProduto extends JFrame {
         }
     }
 
-    // Método de callback para simplificar a atualização da tabela
     public void atualizarTabela() {
         carregarDadosNaTabela(produtoService.listar());
     }
 
-    // --- NOVO: Método para filtrar a tabela com base na pesquisa ---
     private void filtrarTabela() {
         String textoBusca = txtPesquisar.getText().trim();
         if (textoBusca.isEmpty()) {
-            atualizarTabela(); // Se a busca estiver vazia, mostra todos os produtos
+            atualizarTabela();
         } else {
             try {
                 int codigo = Integer.parseInt(textoBusca);
                 Produto produtoEncontrado = produtoService.buscar(codigo);
                 if (produtoEncontrado != null) {
-                    // Se encontrou, mostra uma lista contendo apenas esse produto
                     carregarDadosNaTabela(Collections.singletonList(produtoEncontrado));
                 } else {
-                    tableModel.setRowCount(0); // Se não encontrou, limpa a tabela
+                    tableModel.setRowCount(0);
                 }
             } catch (NumberFormatException e) {
-                tableModel.setRowCount(0); // Se o texto não for um número válido, limpa a tabela
+                tableModel.setRowCount(0);
             }
         }
     }
 
-    // --- NOVO: Método para abrir a janela de edição ---
     private void editarProduto() {
         int selectedRow = tabelaProdutos.getSelectedRow();
         if (selectedRow == -1) {
@@ -159,7 +146,6 @@ public class TelaProduto extends JFrame {
         int codigo = (int) tableModel.getValueAt(selectedRow, 0);
         Produto produtoParaEditar = produtoService.buscar(codigo);
 
-        // Abre a mesma tela de cadastro, mas agora passando o produto a ser editado
         TelaCadastroProduto telaEdicao = new TelaCadastroProduto(this, produtoService, this::atualizarTabela, produtoParaEditar);
         telaEdicao.setVisible(true);
     }

@@ -37,11 +37,8 @@ public class TelaCadastroProduto extends JDialog {
         } else {
             setTitle("Cadastrar Novo Produto");
             
-            // --- MUDANÇA REALIZADA AQUI ---
-            // Calcula o próximo código disponível para exibi-lo imediatamente na tela.
             int proximoCodigo = 1;
             if (!produtoService.listar().isEmpty()) {
-                // Pega o maior código da lista e soma 1
                 proximoCodigo = produtoService.listar().stream().mapToInt(Produto::getCodigo).max().getAsInt() + 1;
             }
             lblCodigoValor.setText(String.valueOf(proximoCodigo));
@@ -99,7 +96,6 @@ public class TelaCadastroProduto extends JDialog {
     }
 
     private void salvarProduto() {
-        // (Nenhuma alteração necessária neste método)
         if (txtDescricao.getText().trim().isEmpty()) {
             JOptionPane.showMessageDialog(this, "O campo 'Descrição' é obrigatório.", "Erro de Validação", JOptionPane.ERROR_MESSAGE);
             return;
