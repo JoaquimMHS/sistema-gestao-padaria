@@ -19,8 +19,12 @@ public class TelaInicial extends JFrame {
         JButton btnFornecedores = new JButton("Gerenciar Fornecedores");
         JButton btnSair = new JButton("Sair");
 
-        btnProdutos.addActionListener(e -> JOptionPane.showMessageDialog(this, "Abrir tela de Produtos"));
-        btnClientes.addActionListener(e -> JOptionPane.showMessageDialog(this, "Abrir tela de Clientes"));
+        btnProdutos.addActionListener(e -> {
+            // Ação para abrir a tela de produtos
+            SwingUtilities.invokeLater(() -> {
+                new TelaProduto().setVisible(true);
+            });
+        });        btnClientes.addActionListener(e -> JOptionPane.showMessageDialog(this, "Abrir tela de Clientes"));
         btnFornecedores.addActionListener(e -> JOptionPane.showMessageDialog(this, "Abrir tela de Fornecedores"));
         btnSair.addActionListener(e -> System.exit(0));
 
