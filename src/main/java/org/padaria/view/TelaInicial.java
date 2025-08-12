@@ -15,7 +15,7 @@ public class TelaInicial extends JFrame {
 
     public TelaInicial() {
         setTitle("Sistema de Gestão - Padaria do Sr. Oak");
-        setSize(400, 300);
+        setSize(400, 500);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
@@ -25,6 +25,7 @@ public class TelaInicial extends JFrame {
         JButton btnProdutos = new JButton("Gerenciar Produtos");
         JButton btnClientes = new JButton("Gerenciar Clientes");
         JButton btnFornecedores = new JButton("Gerenciar Fornecedores");
+        JButton btnVendas = new JButton("Gerenciar Vendas");
         JButton btnSair = new JButton("Sair");
 
         btnProdutos.addActionListener(e -> {
@@ -46,6 +47,7 @@ public class TelaInicial extends JFrame {
         panel.add(btnProdutos);
         panel.add(btnClientes);
         panel.add(btnFornecedores);
+        panel.add(btnVendas);
         panel.add(btnSair);
 
         add(panel);
