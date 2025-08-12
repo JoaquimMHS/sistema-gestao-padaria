@@ -1,11 +1,22 @@
 // Salve em: org/padaria/view/TelaCadastroProduto.java
 package org.padaria.view;
 
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.Frame;
+import java.awt.GridLayout;
+
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+
 import org.padaria.model.Produto;
 import org.padaria.service.ProdutoService;
-
-import javax.swing.*;
-import java.awt.*;
 
 public class TelaCadastroProduto extends JDialog {
 

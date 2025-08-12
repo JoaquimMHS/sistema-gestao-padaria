@@ -1,17 +1,15 @@
 package org.padaria.report;
 
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import org.padaria.model.Produto; 
+
+import org.padaria.model.Produto;
+import org.padaria.util.CSVUtil; 
 
 public class RelatorioEstoque implements IRelatorio {
 
-    private List<Produto> produtos;
+    private final List<Produto> produtos;
 
     public RelatorioEstoque(List<Produto> produtos) {
         this.produtos = produtos;
@@ -25,12 +23,9 @@ public class RelatorioEstoque implements IRelatorio {
     @Override
     public List<String[]> processarDados() {
         this.produtos.sort(Comparator.comparing(Produto::getDescricao));
-
         List<String[]> dadosProcessados = new ArrayList<>();
-        
         for (Produto p : this.produtos) {
             String observacao = p.getEstoqueAtual() < p.getEstoqueMinimo() ? "COMPRAR MAIS" : "";
-
             String[] linha = {
                 String.valueOf(p.getCodigo()),
                 p.getDescricao(),
@@ -39,7 +34,6 @@ public class RelatorioEstoque implements IRelatorio {
             };
             dadosProcessados.add(linha);
         }
-        
         return dadosProcessados;
     }
 
@@ -48,20 +42,8 @@ public class RelatorioEstoque implements IRelatorio {
         String[] cabecalho = getCabecalho();
         List<String[]> dados = processarDados();
 
-        try (BufferedWriter bw = Files.newBufferedWriter(Paths.get(arquivoSaida))) {
-            bw.write(String.join(";", cabecalho));
-            bw.newLine();
+        CSVUtil.escreverArquivoCSV(arquivoSaida, dados, cabecalho);
 
-            for (String[] linha : dados) {
-                bw.write(String.join(";", linha));
-                bw.newLine();
-            }
-
-            System.out.println("Relatório de estoque gerado com sucesso em: " + arquivoSaida);
-
-        } catch (IOException e) {
-            System.out.println("Erro de I/O.");
-            System.exit(1);
-        }
+        System.out.println("Relatório de estoque gerado com sucesso em: " + arquivoSaida);
     }
 }
