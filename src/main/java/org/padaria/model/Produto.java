@@ -26,10 +26,11 @@ public class Produto implements IEntity {
     return this.codigo > 0 && this.descricao != null && !this.descricao.trim().isEmpty();
     }
 
+    @Override
     public int getCodigo() {
         return codigo;
     }
-
+    @Override
     public void setCodigo(int codigo) {
         this.codigo = codigo;
     }

@@ -1,7 +1,15 @@
 package org.padaria.view;
 
-import javax.swing.*;
-import java.awt.*;
+import java.awt.Font;
+import java.awt.GridLayout;
+
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.SwingConstants;
 
 public class TelaInicial extends JFrame {
 
@@ -20,12 +28,14 @@ public class TelaInicial extends JFrame {
         JButton btnSair = new JButton("Sair");
 
         btnProdutos.addActionListener(e -> {
-            // Ação para abrir a tela de produtos
-            SwingUtilities.invokeLater(() -> {
-                new TelaProduto().setVisible(true);
-            });
-        });        btnClientes.addActionListener(e -> JOptionPane.showMessageDialog(this, "Abrir tela de Clientes"));
-        btnFornecedores.addActionListener(e -> JOptionPane.showMessageDialog(this, "Abrir tela de Fornecedores"));
+            TelaProduto telaProdutos = new TelaProduto(this);
+            telaProdutos.setVisible(true);
+            
+            this.setVisible(false); 
+        });
+
+        btnClientes.addActionListener(e -> JOptionPane.showMessageDialog(this, "Funcionalidade não implementada."));
+        btnFornecedores.addActionListener(e -> JOptionPane.showMessageDialog(this, "Funcionalidade não implementada."));
         btnSair.addActionListener(e -> System.exit(0));
 
         JPanel panel = new JPanel();
@@ -40,4 +50,5 @@ public class TelaInicial extends JFrame {
 
         add(panel);
     }
+
 }
