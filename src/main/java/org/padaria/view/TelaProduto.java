@@ -1,4 +1,3 @@
-// Salve em: org/padaria/view/TelaProduto.java
 package org.padaria.view;
 
 import java.awt.BorderLayout;
