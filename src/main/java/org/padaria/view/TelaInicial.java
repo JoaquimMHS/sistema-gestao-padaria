@@ -1,3 +1,4 @@
+// package e imports...
 package org.padaria.view;
 
 import javax.swing.*;
@@ -20,7 +21,13 @@ public class TelaInicial extends JFrame {
         JButton btnSair = new JButton("Sair");
 
         btnProdutos.addActionListener(e -> JOptionPane.showMessageDialog(this, "Abrir tela de Produtos"));
-        btnClientes.addActionListener(e -> JOptionPane.showMessageDialog(this, "Abrir tela de Clientes"));
+        
+        // AQUI ESTÁ A ALTERAÇÃO:
+        btnClientes.addActionListener(e -> {
+            TelaCliente telaClientes = new TelaCliente();
+            telaClientes.setVisible(true);
+        });
+
         btnFornecedores.addActionListener(e -> JOptionPane.showMessageDialog(this, "Abrir tela de Fornecedores"));
         btnSair.addActionListener(e -> System.exit(0));
 
