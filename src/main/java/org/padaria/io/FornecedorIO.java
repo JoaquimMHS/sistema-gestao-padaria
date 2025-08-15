@@ -1,7 +1,7 @@
 package org.padaria.io;
 
 import org.padaria.model.Fornecedor;
-import org.padaria.util.CSVUtil; // Importa a nova classe utilitária
+import org.padaria.util.CSVUtil;
 import org.padaria.util.IOExceptionHandler;
 
 import java.util.ArrayList;

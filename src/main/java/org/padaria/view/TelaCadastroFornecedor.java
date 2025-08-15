@@ -1,4 +1,3 @@
-// Salve em: org/padaria/view/TelaCadastroFornecedor.java
 package org.padaria.view;
 
 import org.padaria.model.Fornecedor;
@@ -9,18 +8,16 @@ import java.awt.*;
 
 public class TelaCadastroFornecedor extends JDialog {
 
-    // Dependências e Callbacks
     private final FornecedorService fornecedorService;
-    private final Runnable onSaveCallback; // Para atualizar a tabela da tela principal
-    private final Fornecedor fornecedorParaEditar; // Se for nulo, é cadastro. Senão, é edição.
+    private final Runnable onSaveCallback;
+    private final Fornecedor fornecedorParaEditar;
 
-    // Componentes do Formulário
     private JLabel lblCodigoValor;
     private JTextField txtNome, txtEndereco, txtTelefone, txtCnpj, txtPessoaContato;
     private JButton btnSalvar;
 
     public TelaCadastroFornecedor(Frame owner, FornecedorService service, Runnable onSaveCallback, Fornecedor fornecedorParaEditar) {
-        super(owner, "Dados do Fornecedor", true); // O 'true' torna o diálogo modal
+        super(owner, "Dados do Fornecedor", true);
 
         this.fornecedorService = service;
         this.onSaveCallback = onSaveCallback;

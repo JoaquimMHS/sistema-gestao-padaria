@@ -61,8 +61,12 @@ public class TelaInicial extends JFrame {
             TelaCliente telaClientes = new TelaCliente();
             telaClientes.setVisible(true);
         });
+        btnFornecedores.addActionListener(e -> {
+            TelaFornecedor telaFornecedor = new TelaFornecedor(this);
+            telaFornecedor.setVisible(true);
+            this.setVisible(false);
+        });
         btnCompras.addActionListener(e -> JOptionPane.showMessageDialog(this, "Funcionalidade não implementada."));
-        btnFornecedores.addActionListener(e -> JOptionPane.showMessageDialog(this, "Funcionalidade não implementada."));
         btnProdutos.addActionListener(e -> {
             TelaProduto telaProdutos = new TelaProduto(this);
             telaProdutos.setVisible(true);

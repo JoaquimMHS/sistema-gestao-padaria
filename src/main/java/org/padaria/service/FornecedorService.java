@@ -16,7 +16,6 @@ public class FornecedorService implements IEntityService<Fornecedor> {
 
     public FornecedorService() {
         this.fornecedores = new ArrayList<>();
-        // A FornecedorIo, por sua vez, usará a sua CSVUtil internamente.
         this.fornecedorIo = new FornecedorIO();
     }
 

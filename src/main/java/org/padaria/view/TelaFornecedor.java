@@ -1,4 +1,3 @@
-// Salve em: org/padaria/view/TelaFornecedor.java
 package org.padaria.view;
 
 import org.padaria.model.Fornecedor;
@@ -21,7 +20,6 @@ public class TelaFornecedor extends JFrame {
     private JTable tabelaFornecedores;
     private DefaultTableModel tableModel;
     private JButton btnAdicionar, btnEditar, btnRemover, btnVoltar;
-    // Opcional: Adicionar um campo de pesquisa como na tela de produtos
 
     public TelaFornecedor(JFrame parent) {
         this.parent = parent;
@@ -36,12 +34,10 @@ public class TelaFornecedor extends JFrame {
         inicializarComponentes();
         adicionarListeners();
 
-        // Carrega os dados na tabela ao iniciar
         atualizarTabela();
     }
 
     private void inicializarComponentes() {
-        // Painel do topo com botões Adicionar e Voltar
         JPanel panelTopo = new JPanel(new BorderLayout(10, 10));
         panelTopo.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
@@ -58,7 +54,7 @@ public class TelaFornecedor extends JFrame {
         tableModel = new DefaultTableModel(colunas, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
-                return false; // Trava a edição direta na tabela
+                return false;
             }
         };
         tabelaFornecedores = new JTable(tableModel);
@@ -75,7 +71,6 @@ public class TelaFornecedor extends JFrame {
     }
 
     private void adicionarListeners() {
-        // Salvar dados ao fechar a janela
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
