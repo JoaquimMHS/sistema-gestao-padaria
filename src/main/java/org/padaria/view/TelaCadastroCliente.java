@@ -1,4 +1,3 @@
-// Salve em: src/org/padaria/view/TelaCadastroCliente.java
 package org.padaria.view;
 
 import org.padaria.model.Cliente;
@@ -26,7 +25,6 @@ public class TelaCadastroCliente extends JDialog {
 
     public TelaCadastroCliente(Frame owner, ClienteService service, Runnable onSaveCallback, Cliente clienteParaEditar) {
         super(owner, "Dados do Cliente", true);
-        // O conceito desta tela de cadastro/edição é baseado no exemplo de TelaCadastroProduto.java
         this.clienteService = service;
         this.onSaveCallback = onSaveCallback;
         this.clienteParaEditar = clienteParaEditar;
@@ -56,7 +54,6 @@ public class TelaCadastroCliente extends JDialog {
         panelForm.setLayout(new BoxLayout(panelForm, BoxLayout.Y_AXIS));
         panelForm.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        // Painel para campos fixos
         JPanel panelFixo = new JPanel(new GridLayout(0, 2, 5, 10));
         panelFixo.add(new JLabel("Código:"));
         lblCodigoValor = new JLabel();

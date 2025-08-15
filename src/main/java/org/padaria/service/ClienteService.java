@@ -11,7 +11,7 @@ public class ClienteService implements IEntityService<Cliente> {
     
     private List<Cliente> clientes;
     private ClienteIO clienteIO;
-    private String caminhoArquivo; // Caminho do arquivo CSV
+    private String caminhoArquivo;
 
     public ClienteService(String caminhoArquivo) {
         this.clientes = new ArrayList<>();

@@ -1,4 +1,3 @@
-// package e imports...
 package org.padaria.view;
 
 import java.awt.BorderLayout;
@@ -38,17 +37,6 @@ public class TelaInicial extends JFrame {
         JButton btnRelatorios = new JButton("Relatórios");
         JButton btnSair = new JButton("Sair");
 
-        btnProdutos.addActionListener(e -> JOptionPane.showMessageDialog(this, "Abrir tela de Produtos"));
-        
-        // AQUI ESTÁ A ALTERAÇÃO:
-        btnClientes.addActionListener(e -> {
-            TelaCliente telaClientes = new TelaCliente();
-            telaClientes.setVisible(true);
-        });
-
-        btnFornecedores.addActionListener(e -> JOptionPane.showMessageDialog(this, "Abrir tela de Fornecedores"));
-        btnSair.addActionListener(e -> System.exit(0));
-
         menuPanel.add(btnClientes);
         menuPanel.add(btnFornecedores);
         menuPanel.add(btnProdutos);
@@ -58,7 +46,6 @@ public class TelaInicial extends JFrame {
         menuPanel.add(btnSair);
 
         add(menuPanel, BorderLayout.WEST);
-
 
         cardLayout = new CardLayout();
         contentPanel = new JPanel(cardLayout);
@@ -70,8 +57,11 @@ public class TelaInicial extends JFrame {
 
         add(contentPanel, BorderLayout.CENTER);
 
+        btnClientes.addActionListener(e -> {
+            TelaCliente telaClientes = new TelaCliente();
+            telaClientes.setVisible(true);
+        });
         btnCompras.addActionListener(e -> JOptionPane.showMessageDialog(this, "Funcionalidade não implementada."));
-        btnClientes.addActionListener(e -> JOptionPane.showMessageDialog(this, "Funcionalidade não implementada."));
         btnFornecedores.addActionListener(e -> JOptionPane.showMessageDialog(this, "Funcionalidade não implementada."));
         btnProdutos.addActionListener(e -> {
             TelaProduto telaProdutos = new TelaProduto(this);

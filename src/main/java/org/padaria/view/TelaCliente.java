@@ -1,4 +1,3 @@
-// Salve em: src/org/padaria/view/TelaCliente.java
 package org.padaria.view;
 
 import org.padaria.model.Cliente;
@@ -27,7 +26,6 @@ public class TelaCliente extends JFrame {
     private JTextField txtPesquisar;
 
     public TelaCliente() {
-        // A estrutura desta classe é baseada no exemplo fornecido em TelaProduto.java.
         clienteService = new ClienteService(arquivoCSV);
 
         setTitle("Clientes");
