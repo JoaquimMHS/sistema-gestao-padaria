@@ -103,8 +103,8 @@ public class TelaProduto extends JFrame {
             int userSelection = fileChooser.showSaveDialog(this);
             if (userSelection == JFileChooser.APPROVE_OPTION) {
                 String path = fileChooser.getSelectedFile().getAbsolutePath();
-                RelatorioEstoque relatorio = new RelatorioEstoque(produtoService.listar());
-                relatorio.gerar(path);
+//                RelatorioEstoque relatorio = new RelatorioEstoque(produtoService.listar());
+//                relatorio.gerar(path);
                 JOptionPane.showMessageDialog(this, "Relatório gerado com sucesso!");
             }
         });

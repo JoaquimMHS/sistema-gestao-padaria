@@ -1,4 +1,3 @@
-// src/main/java/org/padaria/view/TelaInicial.java
 package org.padaria.view;
 
 import java.awt.BorderLayout;
@@ -29,7 +28,6 @@ public class TelaInicial extends JFrame {
         JPanel menuPanel = new JPanel(new GridLayout(7, 1, 10, 10));
         menuPanel.setBorder(BorderFactory.createEmptyBorder(20, 10, 20, 10));
         menuPanel.setPreferredSize(new Dimension(180, 0));
-
 
         JButton btnClientes = new JButton("Clientes");
         JButton btnFornecedores = new JButton("Fornecedores");
@@ -68,15 +66,12 @@ public class TelaInicial extends JFrame {
             telaFornecedor.setVisible(true);
             this.setVisible(false);
         });
-        btnCompras.addActionListener(e -> JOptionPane.showMessageDialog(this, "Funcionalidade não implementada."));
         btnProdutos.addActionListener(e -> {
             TelaProduto telaProdutos = new TelaProduto(this);
             telaProdutos.setVisible(true);
+
             this.setVisible(false);
         });
-
-        btnClientes.addActionListener(e -> JOptionPane.showMessageDialog(this, "Funcionalidade não implementada."));
-
         btnCompras.addActionListener(e -> {
             TelaCompras telaCompras = new TelaCompras(this);
             telaCompras.setVisible(true);
@@ -89,32 +84,12 @@ public class TelaInicial extends JFrame {
             this.setVisible(false);
         });
 
-        // Conectando o novo botão à tela de relatórios
         btnRelatorios.addActionListener(e -> {
             TelaRelatorios telaRelatorios = new TelaRelatorios(this);
             telaRelatorios.setVisible(true);
             this.setVisible(false);
         });
 
-        btnSair.addActionListener(e -> System.exit(0));
-
-        JPanel panel = new JPanel();
-        panel.setLayout(new GridLayout(7, 1, 10, 10)); // Ajustado para 7 linhas
-        panel.setBorder(BorderFactory.createEmptyBorder(20, 40, 20, 40));
-
-        panel.add(titulo);
-        panel.add(btnProdutos);
-        panel.add(btnClientes);
-        panel.add(btnCompras);
-        panel.add(btnVendas);
-        panel.add(btnRelatorios); // Adicionando o novo botão ao painel
-        panel.add(btnSair);
-
-        add(panel);
-    }
-
-            this.setVisible(false);
-        });
         btnSair.addActionListener(e -> System.exit(0));
     }
 
