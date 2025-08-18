@@ -1,4 +1,3 @@
-// Salve em: org/padaria/view/TelaProduto.java
 package org.padaria.view;
 
 import java.awt.BorderLayout;
@@ -8,20 +7,13 @@ import java.awt.event.WindowEvent;
 import java.util.Collections;
 import java.util.List;
 
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.JTextField;
+import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
 
 import org.padaria.model.Produto;
+import org.padaria.report.RelatorioEstoque;
 import org.padaria.service.ProdutoService;
 
 public class TelaProduto extends JFrame {
@@ -32,7 +24,7 @@ public class TelaProduto extends JFrame {
 
     private JTable tabelaProdutos;
     private DefaultTableModel tableModel;
-    private JButton btnAdicionar, btnEditar, btnRemover, btnVoltar;
+    private JButton btnAdicionar, btnEditar, btnRemover, btnVoltar, btnRelatorio;
     private JTextField txtPesquisar;
     private JCheckBox chkEstoqueBaixo; 
 
@@ -77,10 +69,12 @@ public class TelaProduto extends JFrame {
         JPanel panelBotoes = new JPanel(new FlowLayout(FlowLayout.LEFT));
         btnEditar = new JButton("Editar Selecionado");
         btnRemover = new JButton("Remover Selecionado");
-        chkEstoqueBaixo = new JCheckBox("Mostrar apenas estoque baixo"); 
+        btnRelatorio = new JButton("Gerar Relatorio");
+        chkEstoqueBaixo = new JCheckBox("Mostrar apenas estoque baixo");
         panelBotoes.add(btnEditar);
         panelBotoes.add(btnRemover);
         panelBotoes.add(chkEstoqueBaixo);
+        panelBotoes.add(btnRelatorio);
 
         setLayout(new BorderLayout());
         add(panelTopo, BorderLayout.NORTH);
@@ -101,6 +95,18 @@ public class TelaProduto extends JFrame {
             produtoService.salvarDados(arquivoCSV); 
             parent.setVisible(true); 
             dispose();
+        });
+
+        btnRelatorio.addActionListener(e -> {
+            JFileChooser fileChooser = new JFileChooser();
+            fileChooser.setDialogTitle("Salvar Relatório de Estoque");
+            int userSelection = fileChooser.showSaveDialog(this);
+            if (userSelection == JFileChooser.APPROVE_OPTION) {
+                String path = fileChooser.getSelectedFile().getAbsolutePath();
+                RelatorioEstoque relatorio = new RelatorioEstoque(produtoService.listar());
+                relatorio.gerar(path);
+                JOptionPane.showMessageDialog(this, "Relatório gerado com sucesso!");
+            }
         });
 
         chkEstoqueBaixo.addActionListener(e -> {
@@ -161,6 +167,8 @@ public class TelaProduto extends JFrame {
             }
         }
     }
+
+
     
     private void editarProduto() {
         int selectedRow = tabelaProdutos.getSelectedRow();

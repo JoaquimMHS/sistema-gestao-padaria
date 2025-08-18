@@ -1,35 +1,74 @@
 // src/main/java/org/padaria/view/TelaInicial.java
 package org.padaria.view;
 
+import java.awt.BorderLayout;
+import java.awt.CardLayout;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
 
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.SwingConstants;
+import javax.swing.*;
 
 public class TelaInicial extends JFrame {
 
+    private CardLayout cardLayout;
+    private JPanel contentPanel;
+
     public TelaInicial() {
-        setTitle("Sistema de Gestão - Padaria do Sr. Oak");
-        setSize(400, 500);
+        setTitle("Sistema Padaria");
+        setSize(1000, 600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
+        setLayout(new BorderLayout());
 
-        JLabel titulo = new JLabel("PADARIA DO SR. OAK", SwingConstants.CENTER);
-        titulo.setFont(new Font("Arial", Font.BOLD, 18));
+        JLabel titulo = new JLabel("Sistema Padaria", SwingConstants.CENTER);
+        titulo.setFont(new Font("Comic Sans MS", Font.BOLD, 26));
+        titulo.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
+        add(titulo, BorderLayout.NORTH);
 
-        JButton btnProdutos = new JButton("Gerenciar Produtos");
-        JButton btnClientes = new JButton("Gerenciar Clientes");
-        JButton btnCompras = new JButton("Gerenciar Compras");
-        JButton btnVendas = new JButton("Gerenciar Vendas");
-        JButton btnRelatorios = new JButton("Gerar Relatórios"); // Novo botão
+        JPanel menuPanel = new JPanel(new GridLayout(7, 1, 10, 10));
+        menuPanel.setBorder(BorderFactory.createEmptyBorder(20, 10, 20, 10));
+        menuPanel.setPreferredSize(new Dimension(180, 0));
+
+
+        JButton btnClientes = new JButton("Clientes");
+        JButton btnFornecedores = new JButton("Fornecedores");
+        JButton btnProdutos = new JButton("Produtos");
+        JButton btnVendas = new JButton("Vendas");
+        JButton btnCompras = new JButton("Compras");
+        JButton btnRelatorios = new JButton("Relatórios");
         JButton btnSair = new JButton("Sair");
 
+        menuPanel.add(btnClientes);
+        menuPanel.add(btnFornecedores);
+        menuPanel.add(btnProdutos);
+        menuPanel.add(btnVendas);
+        menuPanel.add(btnCompras);
+        menuPanel.add(btnRelatorios);
+        menuPanel.add(btnSair);
+
+        add(menuPanel, BorderLayout.WEST);
+
+        cardLayout = new CardLayout();
+        contentPanel = new JPanel(cardLayout);
+
+        JLabel mensagem = new JLabel("<html><div style='text-align: center;'>Bem vindo ao Sistema<br/>feito por Eliaquim, Felicio, Joaquim, João Pedro e Nicolas</div></html>", SwingConstants.CENTER);
+        mensagem.setFont(new Font("Comic Sans MS", Font.PLAIN, 20));
+        JPanel homePanel = new JPanel(new BorderLayout());
+        homePanel.add(mensagem, BorderLayout.CENTER);
+
+        add(contentPanel, BorderLayout.CENTER);
+
+        btnClientes.addActionListener(e -> {
+            TelaCliente telaClientes = new TelaCliente();
+            telaClientes.setVisible(true);
+        });
+        btnFornecedores.addActionListener(e -> {
+            TelaFornecedor telaFornecedor = new TelaFornecedor(this);
+            telaFornecedor.setVisible(true);
+            this.setVisible(false);
+        });
+        btnCompras.addActionListener(e -> JOptionPane.showMessageDialog(this, "Funcionalidade não implementada."));
         btnProdutos.addActionListener(e -> {
             TelaProduto telaProdutos = new TelaProduto(this);
             telaProdutos.setVisible(true);
@@ -72,5 +111,14 @@ public class TelaInicial extends JFrame {
         panel.add(btnSair);
 
         add(panel);
+    }
+
+            this.setVisible(false);
+        });
+        btnSair.addActionListener(e -> System.exit(0));
+    }
+
+    public static void main(String[] args) {
+        new TelaInicial().setVisible(true);
     }
 }
