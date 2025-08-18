@@ -4,7 +4,7 @@ public class IOExceptionHandler extends RuntimeException{
     // Tratamento padronizado de erros I/O
     // Método para imprimir "Erro de I/O." e encerrar
 
-    public static void handle(Exception e){
+    public static void handle(String s, Exception e){
         System.out.println("Erro de I/O.");
         System.exit(1);
     }

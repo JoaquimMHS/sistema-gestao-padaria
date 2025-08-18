@@ -21,4 +21,8 @@ public class MenuUtil {
         }
         return sc.nextInt();
     }
+
+    public static int lerOpcao(Scanner scanner) {
+        return 0;
+    }
 }

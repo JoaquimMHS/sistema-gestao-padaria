@@ -19,7 +19,7 @@ public class CSVUtil {
                 linhas.add(linha.split(SEPARADOR));
             }
         } catch (IOException e) {
-            IOExceptionHandler.handle(e);
+            IOExceptionHandler.handle("Erro ao ler o arquivo CSV de vendas.", e);
         }
         return linhas;
     }
@@ -31,7 +31,7 @@ public class CSVUtil {
                 writer.println(String.join(SEPARADOR, linha));
             }
         } catch (IOException e) {
-            IOExceptionHandler.handle(e);
+            IOExceptionHandler.handle("Erro ao ler o arquivo CSV de vendas.", e);
         }
     }
 }
