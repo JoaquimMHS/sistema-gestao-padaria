@@ -1,25 +1,31 @@
+// src/main/java/org/padaria/service/ProdutoService.java
 package org.padaria.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.padaria.io.ProdutoIO;
 import org.padaria.model.Produto;
+import org.padaria.util.IOExceptionHandler;
 
 public class ProdutoService implements IEntityService<Produto> {
 
     private List<Produto> produtos;
+    private final ProdutoIO produtoIO;
+    private static int proximoCodigo = 1;
 
     public ProdutoService() {
-        this.produtos = new java.util.ArrayList<>();
+        this.produtos = new ArrayList<>();
+        this.produtoIO = new ProdutoIO();
     }
 
-    public void carregarDados(String arquivo) {
-        this.produtos = new ProdutoIO().lerCSV(arquivo); 
+    public void carregarDados(String arquivo) throws IOExceptionHandler {
+        this.produtos = produtoIO.lerCSV(arquivo);
         System.out.println(this.produtos.size() + " produtos carregados com sucesso.");
     }
 
-    public void salvarDados(String arquivo) {
-        new ProdutoIO().salvarCSV(this.produtos, arquivo);
+    public void salvarDados(String arquivo) throws IOExceptionHandler {
+        produtoIO.salvarCSV(this.produtos, arquivo);
         System.out.println("Produtos salvos com sucesso em " + arquivo);
     }
 
@@ -40,12 +46,13 @@ public class ProdutoService implements IEntityService<Produto> {
             produto.setEstoqueAtual(novoEstoque);
             return true;
         }
-        return false; 
+        return false;
     }
 
     @Override
     public void cadastrar(Produto produto) {
         if (buscar(produto.getCodigo()) == null) {
+            produto.setCodigo(proximoCodigo++);
             this.produtos.add(produto);
         } else {
             System.out.println("Erro: Já existe um produto com o código " + produto.getCodigo());
@@ -79,6 +86,23 @@ public class ProdutoService implements IEntityService<Produto> {
 
     @Override
     public boolean remover(int id) {
-        return this.produtos.removeIf(p -> p.getCodigo() == id);
+        this.produtos.removeIf(p -> p.getCodigo() == id);
+        return false;
+    }
+
+    // Métodos para obtenção de dados do produto
+    public double getPrecoVenda(int codigoProduto) {
+        Produto produto = buscar(codigoProduto);
+        return produto != null ? produto.calcularValorVenda() : 0.0;
+    }
+
+    public double getPrecoCusto(int codigoProduto) {
+        Produto produto = buscar(codigoProduto);
+        return produto != null ? produto.getValorCusto() : 0.0;
+    }
+
+    public String getDescricao(int codigoProduto) {
+        Produto produto = buscar(codigoProduto);
+        return produto != null ? produto.getDescricao() : "Produto Desconhecido";
     }
 }

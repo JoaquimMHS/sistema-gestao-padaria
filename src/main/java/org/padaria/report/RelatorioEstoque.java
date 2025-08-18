@@ -1,49 +1,54 @@
+// src/main/java/org/padaria/report/RelatorioEstoque.java
 package org.padaria.report;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-
 import org.padaria.model.Produto;
-import org.padaria.util.CSVUtil; 
+import org.padaria.service.ProdutoService;
+
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class RelatorioEstoque implements IRelatorio {
+    private final ProdutoService produtoService;
 
-    private final List<Produto> produtos;
-
-    public RelatorioEstoque(List<Produto> produtos) {
-        this.produtos = produtos;
+    public RelatorioEstoque(ProdutoService produtoService) {
+        this.produtoService = produtoService;
     }
 
     @Override
-    public String[] getCabecalho() {
-        return new String[]{"codigo_produto", "descricao_produto", "quantidade_estoque", "observacoes"};
+    public void gerar(String nomeArquivo) throws IOException {
+        System.out.println("Gerando relatório de estoque...");
+        List<String[]> dados = processarDados();
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(nomeArquivo))) {
+            bw.write(getCabecalho());
+            bw.newLine();
+            for (String[] linha : dados) {
+                bw.write(String.join(";", linha));
+                bw.newLine();
+            }
+        }
+        System.out.println("Relatório de estoque gerado em: " + nomeArquivo);
     }
 
     @Override
     public List<String[]> processarDados() {
-        this.produtos.sort(Comparator.comparing(Produto::getDescricao));
-        List<String[]> dadosProcessados = new ArrayList<>();
-        for (Produto p : this.produtos) {
-            String observacao = p.getEstoqueAtual() < p.getEstoqueMinimo() ? "COMPRAR MAIS" : "";
-            String[] linha = {
-                String.valueOf(p.getCodigo()),
-                p.getDescricao(),
-                String.valueOf(p.getEstoqueAtual()),
-                observacao
-            };
-            dadosProcessados.add(linha);
-        }
-        return dadosProcessados;
+        return produtoService.listar().stream()
+                .map(p -> {
+                    String observacao = p.getEstoqueAtual() < p.getEstoqueMinimo() ? "COMPRAR MAIS" : "";
+                    return new String[]{
+                            String.valueOf(p.getCodigo()),
+                            p.getDescricao(),
+                            String.valueOf(p.getEstoqueAtual()),
+                            observacao
+                    };
+                })
+                .collect(Collectors.toList());
     }
 
     @Override
-    public void gerar(String arquivoSaida) {
-        String[] cabecalho = getCabecalho();
-        List<String[]> dados = processarDados();
-
-        CSVUtil.escreverArquivoCSV(arquivoSaida, dados, cabecalho);
-
-        System.out.println("Relatório de estoque gerado com sucesso em: " + arquivoSaida);
+    public String getCabecalho() {
+        return "codigo do produto;descricao do produto;quantidade em estoque;observacoes";
     }
 }
