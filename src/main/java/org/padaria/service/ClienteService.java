@@ -3,6 +3,7 @@ package org.padaria.service;
 import org.padaria.model.Cliente;
 import org.padaria.io.ClienteIO;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,7 +20,7 @@ public class ClienteService implements IEntityService<Cliente> {
         carregarClientes();
     }
 
-    private void carregarClientes() {
+    public void carregarClientes() {
         try {
             this.clientes = clienteIO.lerCSV(this.caminhoArquivo);
         } catch (Exception e) {
@@ -27,7 +28,7 @@ public class ClienteService implements IEntityService<Cliente> {
         }
     }
 
-    private void salvarClientes() {
+    public void salvarClientes() {
         try {
             clienteIO.salvarCSV(this.clientes, this.caminhoArquivo);
         } catch (Exception e) {
@@ -37,10 +38,31 @@ public class ClienteService implements IEntityService<Cliente> {
 
     @Override
     public void cadastrar(Cliente entidade) {
-        if (entidade != null && entidade.isValid()) {
-            this.clientes.add(entidade);
-            salvarClientes();
+        if (entidade != null) {
+            int novoCodigo = gerarProximoCodigo();
+            entidade.setCodigo(novoCodigo);
+
+            if (entidade.getDataCadastro() == null) {
+                entidade.setDataCadastro(LocalDate.now());
+            }
+
+            if (entidade.isValid()) {
+                this.clientes.add(entidade);
+                salvarClientes();
+            } else {
+                System.err.println("Cliente inválido! Verifique os dados.");
+            }
         }
+    }
+
+    private int gerarProximoCodigo() {
+        int maxCodigo = 0;
+        for (Cliente cliente : this.clientes) {
+            if (cliente.getCodigo() > maxCodigo) {
+                maxCodigo = cliente.getCodigo();
+            }
+        }
+        return maxCodigo + 1;
     }
 
     @Override
