@@ -70,8 +70,4 @@ public class CompraService implements IEntityService<Compra> {
                 .filter(c -> c.getCodigoFornecedor() == codigoFornecedor)
                 .collect(Collectors.toList());
     }
-
-    public void atualizarEstoqueProduto(Compra compra) {
-        System.out.println("Atualizando estoque do produto " + compra.getCodigoProduto() + " com " + compra.getQuantidade() + " unidades.");
-    }
 }

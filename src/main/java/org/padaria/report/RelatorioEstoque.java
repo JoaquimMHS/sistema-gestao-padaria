@@ -19,7 +19,6 @@ public class RelatorioEstoque implements IRelatorio {
 
     @Override
     public void gerar(String nomeArquivo) throws IOException {
-        System.out.println("Gerando relatório de estoque");
         try (PrintWriter writer = new PrintWriter(new FileWriter(nomeArquivo))) {
             String[] cabecalho = getCabecalho();
             writer.println(String.join(";", cabecalho));
@@ -53,7 +52,7 @@ public class RelatorioEstoque implements IRelatorio {
 
     @Override
     public String[] getCabecalho() {
-        return new String[]{
+        return new String[] {
                 "código do produto",
                 "descrição do produto",
                 "quantidade em estoque",

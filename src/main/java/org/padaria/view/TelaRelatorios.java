@@ -12,8 +12,15 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
+
+import org.padaria.report.RelatorioContasPagar;
+import org.padaria.report.RelatorioContasReceber;
+import org.padaria.report.RelatorioEstoque;
 import org.padaria.report.RelatorioVendasPagamento;
 import org.padaria.report.RelatorioVendasProduto;
+import org.padaria.service.ClienteService;
+import org.padaria.service.CompraService;
+import org.padaria.service.FornecedorService;
 import org.padaria.service.ProdutoService;
 import org.padaria.service.VendaService;
 
@@ -22,18 +29,25 @@ public class TelaRelatorios extends JFrame {
     private final JFrame parent;
     private final VendaService vendaService;
     private final ProdutoService produtoService;
+    private final ClienteService clienteService;
+    private final CompraService compraService;
+    private final FornecedorService fornecedorService;
 
-    private JButton btnVendasProduto;
-    private JButton btnVendasPagamento;
+    private JButton btnVendasPagamento, btnVendasProduto, btnAPagar, btnAReceber, btnEstoque;
 
     public TelaRelatorios(JFrame parent) {
+        String arquivoClientes = "clientes.csv";
         this.parent = parent;
         this.vendaService = new VendaService();
         this.produtoService = new ProdutoService();
+        this.clienteService = new ClienteService(arquivoClientes);
+        this.compraService = new CompraService();
+        this.fornecedorService = new FornecedorService();
 
         try {
             vendaService.carregarDados("vendas.csv");
             produtoService.carregarDados("produtos.csv");
+
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Erro ao carregar dados para os relatórios: " + e.getMessage(), "Erro",
                     JOptionPane.ERROR_MESSAGE);
@@ -56,12 +70,18 @@ public class TelaRelatorios extends JFrame {
         JLabel titulo = new JLabel("Escolha o Relatório", SwingConstants.CENTER);
         titulo.setFont(new Font("Arial", Font.BOLD, 16));
 
+        btnAPagar = new JButton(" Total a pagar por fornecedor:");
+        btnAReceber = new JButton("Total a receber por cliente:");
         btnVendasProduto = new JButton("Vendas e Lucro por Produto");
         btnVendasPagamento = new JButton("Vendas e Lucro por Forma de Pagamento");
+        btnEstoque = new JButton("Estado do estoque:");
 
         panel.add(titulo);
+        panel.add(btnAPagar);
+        panel.add(btnAReceber);
         panel.add(btnVendasProduto);
         panel.add(btnVendasPagamento);
+        panel.add(btnEstoque);
 
         add(panel);
     }
@@ -71,6 +91,36 @@ public class TelaRelatorios extends JFrame {
             @Override
             public void windowClosing(WindowEvent e) {
                 parent.setVisible(true);
+            }
+        });
+
+        btnAPagar.addActionListener(e -> {
+            try {
+                // Pass the required services to the constructor
+                RelatorioContasPagar relatorio = new RelatorioContasPagar(fornecedorService, compraService,
+                        produtoService);
+                List<String[]> dados = relatorio.processarDados();
+                String[] cabecalho = relatorio.getCabecalho();
+                new TelaVisualizacaoRelatorio(this, "Relatório de Contas a Pagar", dados, cabecalho, relatorio)
+                        .setVisible(true);
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(this, "Erro ao processar dados do relatório: " + ex.getMessage(), "Erro",
+                        JOptionPane.ERROR_MESSAGE);
+            }
+        });
+
+        btnAReceber.addActionListener(e -> {
+            try {
+                // Pass the required services to the constructor
+                RelatorioContasReceber relatorio = new RelatorioContasReceber(clienteService, vendaService,
+                        produtoService);
+                List<String[]> dados = relatorio.processarDados();
+                String[] cabecalho = relatorio.getCabecalho();
+                new TelaVisualizacaoRelatorio(this, "Relatório de Contas a Receber", dados, cabecalho, relatorio)
+                        .setVisible(true);
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(this, "Erro ao processar dados do relatório: " + ex.getMessage(), "Erro",
+                        JOptionPane.ERROR_MESSAGE);
             }
         });
 
@@ -93,6 +143,20 @@ public class TelaRelatorios extends JFrame {
                 List<String[]> dados = relatorio.processarDados();
                 String[] cabecalho = relatorio.getCabecalho();
                 new TelaVisualizacaoRelatorio(this, "Relatório de Vendas por Pagamento", dados, cabecalho, relatorio)
+                        .setVisible(true);
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(this, "Erro ao processar dados do relatório: " + ex.getMessage(), "Erro",
+                        JOptionPane.ERROR_MESSAGE);
+            }
+        });
+
+        btnEstoque.addActionListener(e -> {
+            try {
+                // Pass the required service to the constructor
+                RelatorioEstoque relatorio = new RelatorioEstoque(produtoService);
+                List<String[]> dados = relatorio.processarDados();
+                String[] cabecalho = relatorio.getCabecalho();
+                new TelaVisualizacaoRelatorio(this, "Relatório de Estoque", dados, cabecalho, relatorio)
                         .setVisible(true);
             } catch (Exception ex) {
                 JOptionPane.showMessageDialog(this, "Erro ao processar dados do relatório: " + ex.getMessage(), "Erro",

@@ -20,7 +20,6 @@ public class ProdutoService implements IEntityService<Produto> {
 
     public void carregarDados(String arquivo) throws IOExceptionHandler {
         this.produtos = produtoIO.lerCSV(arquivo);
-        System.out.println(this.produtos.size() + " produtos carregados com sucesso.");
         if (this.produtos != null && !this.produtos.isEmpty()) {
             int maxCodigo = this.produtos.stream()
                     .mapToInt(Produto::getCodigo)
@@ -32,7 +31,6 @@ public class ProdutoService implements IEntityService<Produto> {
 
     public void salvarDados(String arquivo) throws IOExceptionHandler {
         produtoIO.salvarCSV(this.produtos, arquivo);
-        System.out.println("Produtos salvos com sucesso em " + arquivo);
     }
 
     public boolean verificarEstoqueBaixo(Produto produto) {

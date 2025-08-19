@@ -23,8 +23,8 @@ public class RelatorioContasPagar implements IRelatorio {
     private final ProdutoService produtoService;
 
     public RelatorioContasPagar(FornecedorService fornecedorService,
-                                CompraService compraService,
-                                ProdutoService produtoService) {
+            CompraService compraService,
+            ProdutoService produtoService) {
         this.fornecedorService = fornecedorService;
         this.compraService = compraService;
         this.produtoService = produtoService;
@@ -32,7 +32,6 @@ public class RelatorioContasPagar implements IRelatorio {
 
     @Override
     public void gerar(String nomeArquivo) {
-        System.out.println("Gerando relatório de contas a pagar");
         try (PrintWriter writer = new PrintWriter(new FileWriter(nomeArquivo))) {
             String[] cabecalho = getCabecalho();
             writer.println(String.join(";", cabecalho));
@@ -73,7 +72,7 @@ public class RelatorioContasPagar implements IRelatorio {
         totalPorFornecedor.forEach((codFornecedor, total) -> {
             Fornecedor fornecedor = fornecedores.get(codFornecedor);
             if (fornecedor != null) {
-                resultado.add(new String[]{
+                resultado.add(new String[] {
                         fornecedor.getNome(),
                         fornecedor.getCNPJ(),
                         fornecedor.getPessoaContato(),
@@ -91,7 +90,7 @@ public class RelatorioContasPagar implements IRelatorio {
 
     @Override
     public String[] getCabecalho() {
-        return new String[]{
+        return new String[] {
                 "nome do fornecedor",
                 "cnpj do fornecedor",
                 "pessoa de contato",
