@@ -15,10 +15,7 @@ import org.padaria.util.CSVUtil;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
 
 public class RelatorioContasReceber implements IRelatorio {
 
@@ -28,7 +25,7 @@ public class RelatorioContasReceber implements IRelatorio {
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
     public RelatorioContasReceber(ClienteService clienteService, VendaService vendaService,
-                                  ProdutoService produtoService) {
+            ProdutoService produtoService) {
         this.clienteService = clienteService;
         this.vendaService = vendaService;
         this.produtoService = produtoService;
@@ -43,30 +40,35 @@ public class RelatorioContasReceber implements IRelatorio {
 
     @Override
     public List<String[]> processarDados() {
-        Map<Integer, Double> totaisPorCliente = new HashMap<>();
-
-        // Busca vendas fiado usando o enum correto
         List<Venda> vendasFiado = vendaService.listarVendasPorPagamento(ModoPagamento.FIADO);
+        List<Cliente> clientes = clienteService.listar();
+        List<Produto> produtos = produtoService.listar();
 
-        // Calcula o total por cliente
-        for (Venda venda : vendasFiado) {
-            Produto produto = produtoService.buscar(venda.getCodigoProduto());
-            if (produto != null) {
-                // Usa o método correto para calcular valor de venda
-                double valorVenda = produto.calcularValorVenda() * venda.getQuantidade();
-                totaisPorCliente.merge(venda.getCodigoCliente(), valorVenda, Double::sum);
-            }
-        }
-
-        // Monta as linhas do relatório
         List<String[]> linhasRelatorio = new ArrayList<>();
-        for (Map.Entry<Integer, Double> entry : totaisPorCliente.entrySet()) {
-            Cliente cliente = clienteService.buscar(entry.getKey());
-            if (cliente != null) {
+
+        // Para cada cliente, calcula o total a receber
+        for (Cliente cliente : clientes) {
+            double totalReceber = 0.0;
+
+            // Encontra todas as vendas fiado deste cliente
+            for (Venda venda : vendasFiado) {
+                if (venda.getCodigoCliente() == cliente.getCodigo()) {
+                    // Encontra o produto correspondente
+                    for (Produto produto : produtos) {
+                        if (produto.getCodigo() == venda.getCodigoProduto()) {
+                            totalReceber += produto.calcularValorVenda() * venda.getQuantidade();
+                            break; // Produto encontrado, sai do loop interno
+                        }
+                    }
+                }
+            }
+
+            // Só adiciona se houver valor a receber
+            if (totalReceber > 0) {
                 String[] linha = new String[6];
                 linha[0] = cliente.getNome();
 
-                // Determina tipo e documento do cliente com cast seguro
+                // Determina tipo e documento do cliente
                 if (cliente.getTipo() == TipoCliente.PESSOA_FISICA && cliente instanceof PessoaFisica) {
                     linha[1] = "F";
                     linha[2] = ((PessoaFisica) cliente).getCpf();
@@ -74,14 +76,13 @@ public class RelatorioContasReceber implements IRelatorio {
                     linha[1] = "J";
                     linha[2] = ((PessoaJuridica) cliente).getCnpj();
                 } else {
-                    // Fallback para casos inesperados
                     linha[1] = "N/A";
                     linha[2] = "N/A";
                 }
 
                 linha[3] = cliente.getTelefone();
                 linha[4] = cliente.getDataCadastro().format(DATE_FORMATTER);
-                linha[5] = String.format("%.2f", entry.getValue()).replace(",", ".");
+                linha[5] = String.format("%.2f", totalReceber).replace(",", ".");
 
                 linhasRelatorio.add(linha);
             }
@@ -95,7 +96,7 @@ public class RelatorioContasReceber implements IRelatorio {
 
     @Override
     public String[] getCabecalho() {
-        return new String[]{
+        return new String[] {
                 "nome do cliente",
                 "tipo do cliente",
                 "cpf/cnpj do cliente",

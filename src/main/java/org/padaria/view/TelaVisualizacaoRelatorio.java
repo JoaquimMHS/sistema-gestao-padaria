@@ -25,7 +25,8 @@ public class TelaVisualizacaoRelatorio extends JDialog {
     private DefaultTableModel tableModel;
     private JButton btnSalvar;
 
-    public TelaVisualizacaoRelatorio(Frame owner, String titulo, List<String[]> dados, String[] cabecalho, IRelatorio relatorio) {
+    public TelaVisualizacaoRelatorio(Frame owner, String titulo, List<String[]> dados, String[] cabecalho,
+            IRelatorio relatorio) {
         super(owner, titulo, true);
         this.dadosRelatorio = dados;
         this.cabecalho = cabecalho;
@@ -60,18 +61,31 @@ public class TelaVisualizacaoRelatorio extends JDialog {
     private void adicionarListeners() {
         btnSalvar.addActionListener(e -> {
             try {
-                // Determine o nome do arquivo de saída com base no tipo de relatório
                 String nomeArquivo = "";
-                if (relatorio instanceof org.padaria.report.RelatorioVendasProduto) {
+                if (relatorio instanceof org.padaria.report.RelatorioContasPagar) {
+                    nomeArquivo = "1-apagar.csv";
+                } else if (relatorio instanceof org.padaria.report.RelatorioContasReceber) {
+                    nomeArquivo = "2-areceber.csv";
+                } else if (relatorio instanceof org.padaria.report.RelatorioVendasProduto) {
                     nomeArquivo = "3-vendasprod.csv";
                 } else if (relatorio instanceof org.padaria.report.RelatorioVendasPagamento) {
                     nomeArquivo = "4-vendaspgto.csv";
+                } else if (relatorio instanceof org.padaria.report.RelatorioEstoque) {
+                    nomeArquivo = "5-estoque.csv";
                 }
 
-                relatorio.gerar(nomeArquivo); // Chamada para o método gerar do relatório
-                JOptionPane.showMessageDialog(this, "Relatório salvo com sucesso em: " + nomeArquivo, "Sucesso", JOptionPane.INFORMATION_MESSAGE);
+                if (!nomeArquivo.isEmpty()) {
+                    relatorio.gerar(nomeArquivo);
+                    JOptionPane.showMessageDialog(this, "Relatório salvo com sucesso em: " + nomeArquivo, "Sucesso",
+                            JOptionPane.INFORMATION_MESSAGE);
+                } else {
+                    JOptionPane.showMessageDialog(this, "Tipo de relatório não reconhecido.", "Erro",
+                            JOptionPane.ERROR_MESSAGE);
+                }
+
             } catch (IOException ex) {
-                JOptionPane.showMessageDialog(this, "Erro ao salvar o arquivo: " + ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Erro ao salvar o arquivo: " + ex.getMessage(), "Erro",
+                        JOptionPane.ERROR_MESSAGE);
             }
         });
     }

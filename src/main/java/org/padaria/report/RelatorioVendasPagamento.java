@@ -5,20 +5,17 @@ import org.padaria.model.Venda;
 import org.padaria.service.ProdutoService;
 import org.padaria.service.VendaService;
 
-import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 public class RelatorioVendasPagamento implements IRelatorio {
     private final VendaService vendaService;
     private final ProdutoService produtoService;
 
-    // Classe interna estática para representar um item do relatório
     private static class RelatorioItemPagamento {
         private ModoPagamento modoPagamento;
         private double receitaBruta;
@@ -33,10 +30,17 @@ public class RelatorioVendasPagamento implements IRelatorio {
             this.lucro += (valorVenda - valorCusto) * quantidade;
         }
 
-        // Getters
-        public ModoPagamento getModoPagamento() { return modoPagamento; }
-        public double getReceitaBruta() { return receitaBruta; }
-        public double getLucro() { return lucro; }
+        public ModoPagamento getModoPagamento() {
+            return modoPagamento;
+        }
+
+        public double getReceitaBruta() {
+            return receitaBruta;
+        }
+
+        public double getLucro() {
+            return lucro;
+        }
     }
 
     public RelatorioVendasPagamento(VendaService vendaService, ProdutoService produtoService) {
@@ -44,7 +48,6 @@ public class RelatorioVendasPagamento implements IRelatorio {
         this.produtoService = produtoService;
     }
 
-    // O método principal que orquestra a geração do relatório
     @Override
     public void gerar(String nomeArquivo) throws IOException {
         System.out.println("Gerando relatório de vendas por forma de pagamento...");
@@ -57,8 +60,7 @@ public class RelatorioVendasPagamento implements IRelatorio {
                 writer.println(String.join(";", linha));
             }
         } catch (IOException e) {
-            System.err.println("Erro ao gerar relatório de estoque: " + e.getMessage());
-            System.out.println("Erro de I/O.");
+            System.err.println("Erro ao gerar relatório: " + e.getMessage());
             System.exit(1);
         }
         System.out.println("Relatório gerado com sucesso em: " + nomeArquivo);
@@ -66,40 +68,61 @@ public class RelatorioVendasPagamento implements IRelatorio {
 
     @Override
     public List<String[]> processarDados() {
-        Map<ModoPagamento, RelatorioItemPagamento> relatorioMap = vendaService.listar().stream()
-                .collect(Collectors.toMap(
-                        Venda::getModoPagamento,
-                        venda -> {
-                            RelatorioItemPagamento item = new RelatorioItemPagamento(venda.getModoPagamento());
-                            item.adicionarVenda(
-                                    produtoService.getPrecoVenda(venda.getCodigoProduto()),
-                                    produtoService.getPrecoCusto(venda.getCodigoProduto()),
-                                    venda.getQuantidade()
-                            );
-                            return item;
-                        },
-                        (itemExistente, novoItem) -> {
-                            itemExistente.receitaBruta += novoItem.receitaBruta;
-                            itemExistente.lucro += novoItem.lucro;
-                            return itemExistente;
-                        }
-                ));
+        List<Venda> vendas = vendaService.listar();
+        List<RelatorioItemPagamento> itens = new ArrayList<>();
 
-        // Converte o Map para List<String[]> e ordena os dados
-        return relatorioMap.values().stream()
-                .sorted(Comparator.comparing(RelatorioItemPagamento::getLucro).reversed()
-                        .thenComparing(item -> item.getModoPagamento().getCaracter()))
-                .map(item -> new String[]{
-                        String.valueOf(item.getModoPagamento().getCaracter()),
-                        String.format("%.2f", item.getReceitaBruta()),
-                        String.format("%.2f", item.getLucro())
-                })
-                .collect(Collectors.toList());
+        // Processa cada venda
+        for (Venda venda : vendas) {
+            ModoPagamento modoPagamento = venda.getModoPagamento();
+            int codigoProduto = venda.getCodigoProduto();
+            double precoVenda = produtoService.getPrecoVenda(codigoProduto);
+            double precoCusto = produtoService.getPrecoCusto(codigoProduto);
+
+            // Busca se já existe um item para este modo de pagamento
+            RelatorioItemPagamento itemExistente = null;
+            for (RelatorioItemPagamento item : itens) {
+                if (item.getModoPagamento() == modoPagamento) {
+                    itemExistente = item;
+                    break;
+                }
+            }
+
+            // Se não existe, cria novo item
+            if (itemExistente == null) {
+                itemExistente = new RelatorioItemPagamento(modoPagamento);
+                itens.add(itemExistente);
+            }
+
+            // Adiciona os valores da venda
+            itemExistente.adicionarVenda(precoVenda, precoCusto, venda.getQuantidade());
+        }
+
+        // Ordena por lucro (decrescente) e depois por caractere do modo de pagamento
+        itens.sort((a, b) -> {
+            int comparacaoLucro = Double.compare(b.getLucro(), a.getLucro());
+            if (comparacaoLucro != 0)
+                return comparacaoLucro;
+            return Character.compare(
+                    a.getModoPagamento().getCaracter(),
+                    b.getModoPagamento().getCaracter());
+        });
+
+        // Converte para array de strings
+        List<String[]> resultado = new ArrayList<>();
+        for (RelatorioItemPagamento item : itens) {
+            resultado.add(new String[] {
+                    String.valueOf(item.getModoPagamento().getCaracter()),
+                    String.format("%.2f", item.getReceitaBruta()),
+                    String.format("%.2f", item.getLucro())
+            });
+        }
+
+        return resultado;
     }
 
     @Override
     public String[] getCabecalho() {
-        return new String[]{
+        return new String[] {
                 "modo de pagamento",
                 "receita bruta",
                 "lucro"

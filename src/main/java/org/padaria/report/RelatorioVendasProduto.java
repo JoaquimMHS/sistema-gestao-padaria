@@ -4,14 +4,11 @@ import org.padaria.model.Venda;
 import org.padaria.service.ProdutoService;
 import org.padaria.service.VendaService;
 
-import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Comparator;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 public class RelatorioVendasProduto implements IRelatorio {
     private final VendaService vendaService;
@@ -33,11 +30,21 @@ public class RelatorioVendasProduto implements IRelatorio {
             this.lucro += (valorVenda - valorCusto) * quantidade;
         }
 
-        // Getters
-        public int getCodigoProduto() { return codigoProduto; }
-        public String getDescricaoProduto() { return descricaoProduto; }
-        public double getReceitaBruta() { return receitaBruta; }
-        public double getLucro() { return lucro; }
+        public int getCodigoProduto() {
+            return codigoProduto;
+        }
+
+        public String getDescricaoProduto() {
+            return descricaoProduto;
+        }
+
+        public double getReceitaBruta() {
+            return receitaBruta;
+        }
+
+        public double getLucro() {
+            return lucro;
+        }
     }
 
     public RelatorioVendasProduto(VendaService vendaService, ProdutoService produtoService) {
@@ -58,8 +65,7 @@ public class RelatorioVendasProduto implements IRelatorio {
                 writer.println(String.join(";", linha));
             }
         } catch (IOException e) {
-            System.err.println("Erro ao gerar relatório de estoque: " + e.getMessage());
-            System.out.println("Erro de I/O.");
+            System.err.println("Erro ao gerar relatório: " + e.getMessage());
             System.exit(1);
         }
         System.out.println("Relatório gerado com sucesso em: " + nomeArquivo);
@@ -67,45 +73,60 @@ public class RelatorioVendasProduto implements IRelatorio {
 
     @Override
     public List<String[]> processarDados() {
-        Map<Integer, RelatorioItemProduto> relatorioMap = vendaService.listar().stream()
-                .collect(Collectors.toMap(
-                        Venda::getCodigoProduto,
-                        venda -> {
-                            String descricao = produtoService.getDescricao(venda.getCodigoProduto());
-                            RelatorioItemProduto item = new RelatorioItemProduto(venda.getCodigoProduto(), descricao);
-                            item.adicionarVenda(
-                                    produtoService.getPrecoVenda(venda.getCodigoProduto()),
-                                    produtoService.getPrecoCusto(venda.getCodigoProduto()),
-                                    venda.getQuantidade()
-                            );
-                            return item;
-                        },
-                        (itemExistente, novoItem) -> {
-                            itemExistente.receitaBruta += novoItem.receitaBruta;
-                            itemExistente.lucro += novoItem.lucro;
-                            return itemExistente;
-                        }
-                ));
+        List<Venda> vendas = vendaService.listar();
+        List<RelatorioItemProduto> itens = new ArrayList<>();
 
-        // Converte o Map para uma lista de arrays de string e aplica a ordenação
-        List<String[]> dadosOrdenados = relatorioMap.values().stream()
-                .sorted(Comparator.comparing(RelatorioItemProduto::getLucro).reversed()
-                        .thenComparing(RelatorioItemProduto::getCodigoProduto))
-                .map(item -> new String[]{
-                        String.valueOf(item.getCodigoProduto()),
-                        item.getDescricaoProduto(),
-                        String.format("%.2f", item.getReceitaBruta()),
-                        String.format("%.2f", item.getLucro())
-                })
-                .collect(Collectors.toList());
+        // Processa cada venda
+        for (Venda venda : vendas) {
+            int codigoProduto = venda.getCodigoProduto();
+            String descricao = produtoService.getDescricao(codigoProduto);
+            double precoVenda = produtoService.getPrecoVenda(codigoProduto);
+            double precoCusto = produtoService.getPrecoCusto(codigoProduto);
 
-        return dadosOrdenados;
+            // Busca se já existe um item para este produto
+            RelatorioItemProduto itemExistente = null;
+            for (RelatorioItemProduto item : itens) {
+                if (item.getCodigoProduto() == codigoProduto) {
+                    itemExistente = item;
+                    break;
+                }
+            }
+
+            // Se não existe, cria novo item
+            if (itemExistente == null) {
+                itemExistente = new RelatorioItemProduto(codigoProduto, descricao);
+                itens.add(itemExistente);
+            }
+
+            // Adiciona os valores da venda
+            itemExistente.adicionarVenda(precoVenda, precoCusto, venda.getQuantidade());
+        }
+
+        // Ordena por lucro (decrescente) e depois por código do produto
+        itens.sort((a, b) -> {
+            int comparacaoLucro = Double.compare(b.getLucro(), a.getLucro());
+            return comparacaoLucro != 0 ? comparacaoLucro : Integer.compare(a.getCodigoProduto(), b.getCodigoProduto());
+        });
+
+        // Converte para array de strings
+        List<String[]> resultado = new ArrayList<>();
+        for (RelatorioItemProduto item : itens) {
+            resultado.add(new String[] {
+                    String.valueOf(item.getCodigoProduto()),
+                    item.getDescricaoProduto(),
+                    String.format("%.2f", item.getReceitaBruta()),
+                    String.format("%.2f", item.getLucro())
+            });
+        }
+
+        return resultado;
     }
+
     @Override
     public String[] getCabecalho() {
-        return new String[]{
+        return new String[] {
                 "codigo do produto",
-                "descricao do produto",
+                "descrição do produto",
                 "receita bruta",
                 "lucro"
         };

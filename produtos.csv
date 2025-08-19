@@ -1,3 +1,5 @@
 codigo;descricao;estoque_minimo;estoque_atual;valor_custo;percentual_lucro
-1;Mouse;3;12;10.0;10
+1;Mouse;3;0;10.0;10
 2;nada;10;10;10.0;10
+3;aaa;10;10;10.0;10
+4;ei;2;1;10.0;10

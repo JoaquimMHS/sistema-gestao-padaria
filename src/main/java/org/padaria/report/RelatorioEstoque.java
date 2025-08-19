@@ -1,6 +1,5 @@
 package org.padaria.report;
 
-import org.padaria.model.Produto;
 import org.padaria.service.ProdutoService;
 
 import java.io.FileWriter;
@@ -37,7 +36,7 @@ public class RelatorioEstoque implements IRelatorio {
     @Override
     public List<String[]> processarDados() {
         return produtoService.listar().stream()
-                .sorted(Comparator.comparing(Produto::getDescricao))
+                .sorted(Comparator.comparing(p -> p.getDescricao().toLowerCase()))
                 .map(p -> {
                     String observacao = p.getEstoqueAtual() < p.getEstoqueMinimo() ? "COMPRAR MAIS" : "";
                     return new String[] {

@@ -64,17 +64,17 @@ public class TelaRelatorios extends JFrame {
 
     private void inicializarComponentes() {
         JPanel panel = new JPanel();
-        panel.setLayout(new GridLayout(3, 1, 10, 10));
+        panel.setLayout(new GridLayout(7, 1, 10, 10));
         panel.setBorder(BorderFactory.createEmptyBorder(20, 40, 20, 40));
 
         JLabel titulo = new JLabel("Escolha o Relatório", SwingConstants.CENTER);
         titulo.setFont(new Font("Arial", Font.BOLD, 16));
 
-        btnAPagar = new JButton(" Total a pagar por fornecedor:");
-        btnAReceber = new JButton("Total a receber por cliente:");
+        btnAPagar = new JButton(" Total a pagar por fornecedor");
+        btnAReceber = new JButton("Total a receber por cliente");
         btnVendasProduto = new JButton("Vendas e Lucro por Produto");
         btnVendasPagamento = new JButton("Vendas e Lucro por Forma de Pagamento");
-        btnEstoque = new JButton("Estado do estoque:");
+        btnEstoque = new JButton("Estado do estoque");
 
         panel.add(titulo);
         panel.add(btnAPagar);
