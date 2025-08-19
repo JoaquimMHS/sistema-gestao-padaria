@@ -11,7 +11,6 @@ import java.util.stream.Collectors;
 public class VendaService implements IEntityService<Venda> {
     private final VendaIO vendaIO;
     private List<Venda> vendas;
-    private static int proximoCodigo = 1;
 
     public VendaService() {
         this.vendaIO = new VendaIO();
@@ -28,7 +27,6 @@ public class VendaService implements IEntityService<Venda> {
 
     @Override
     public void cadastrar(Venda venda) {
-        venda.setCodigo(proximoCodigo++);
         this.vendas.add(venda);
     }
 
@@ -59,8 +57,7 @@ public class VendaService implements IEntityService<Venda> {
 
     @Override
     public boolean remover(int codigo) {
-        vendas.removeIf(v -> v.getCodigo() == codigo);
-        return false;
+        return vendas.removeIf(v -> v.getCodigo() == codigo);
     }
 
     // Métodos Específicos

@@ -1,4 +1,3 @@
-// src/main/java/org/padaria/report/RelatorioVendasPagamento.java
 package org.padaria.report;
 
 import org.padaria.model.ModoPagamento;
@@ -9,6 +8,7 @@ import org.padaria.service.VendaService;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -48,19 +48,18 @@ public class RelatorioVendasPagamento implements IRelatorio {
     @Override
     public void gerar(String nomeArquivo) throws IOException {
         System.out.println("Gerando relatório de vendas por forma de pagamento...");
+        try (PrintWriter writer = new PrintWriter(new FileWriter(nomeArquivo))) {
+            String[] cabecalho = getCabecalho();
+            writer.println(String.join(";", cabecalho));
 
-        // Processa os dados, obtendo uma lista de arrays de strings já ordenados
-        List<String[]> dadosOrdenados = processarDados();
-
-        // Salva os dados processados no arquivo CSV
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter(nomeArquivo))) {
-            bw.write(getCabecalho());
-            bw.newLine();
-            for (String[] item : dadosOrdenados) {
-                String linha = String.join(";", item);
-                bw.write(linha);
-                bw.newLine();
+            List<String[]> dados = processarDados();
+            for (String[] linha : dados) {
+                writer.println(String.join(";", linha));
             }
+        } catch (IOException e) {
+            System.err.println("Erro ao gerar relatório de estoque: " + e.getMessage());
+            System.out.println("Erro de I/O.");
+            System.exit(1);
         }
         System.out.println("Relatório gerado com sucesso em: " + nomeArquivo);
     }
@@ -99,7 +98,11 @@ public class RelatorioVendasPagamento implements IRelatorio {
     }
 
     @Override
-    public String getCabecalho() {
-        return "modo_pagamento;receita_bruta;lucro";
+    public String[] getCabecalho() {
+        return new String[]{
+                "modo de pagamento",
+                "receita bruta",
+                "lucro"
+        };
     }
 }

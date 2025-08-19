@@ -21,6 +21,13 @@ public class ProdutoService implements IEntityService<Produto> {
     public void carregarDados(String arquivo) throws IOExceptionHandler {
         this.produtos = produtoIO.lerCSV(arquivo);
         System.out.println(this.produtos.size() + " produtos carregados com sucesso.");
+        if (this.produtos != null && !this.produtos.isEmpty()) {
+            int maxCodigo = this.produtos.stream()
+                    .mapToInt(Produto::getCodigo)
+                    .max()
+                    .orElse(0);
+            proximoCodigo = maxCodigo + 1;
+        }
     }
 
     public void salvarDados(String arquivo) throws IOExceptionHandler {
@@ -50,12 +57,8 @@ public class ProdutoService implements IEntityService<Produto> {
 
     @Override
     public void cadastrar(Produto produto) {
-        if (buscar(produto.getCodigo()) == null) {
-            produto.setCodigo(proximoCodigo++);
-            this.produtos.add(produto);
-        } else {
-            System.out.println("Erro: Já existe um produto com o código " + produto.getCodigo());
-        }
+        produto.setCodigo(proximoCodigo++);
+        this.produtos.add(produto);
     }
 
     @Override
@@ -85,8 +88,7 @@ public class ProdutoService implements IEntityService<Produto> {
 
     @Override
     public boolean remover(int id) {
-        this.produtos.removeIf(p -> p.getCodigo() == id);
-        return false;
+        return this.produtos.removeIf(p -> p.getCodigo() == id);
     }
 
     // Métodos para obtenção de dados do produto

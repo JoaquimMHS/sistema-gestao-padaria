@@ -1,4 +1,3 @@
-// src/main/java/org/padaria/view/TelaRelatorios.java
 package org.padaria.view;
 
 import java.awt.Font;
@@ -79,7 +78,7 @@ public class TelaRelatorios extends JFrame {
             try {
                 RelatorioVendasProduto relatorio = new RelatorioVendasProduto(vendaService, produtoService);
                 List<String[]> dados = relatorio.processarDados();
-                String[] cabecalho = relatorio.getCabecalho().split(";");
+                String[] cabecalho = relatorio.getCabecalho();
                 new TelaVisualizacaoRelatorio(this, "Relatório de Vendas por Produto", dados, cabecalho, relatorio)
                         .setVisible(true);
             } catch (Exception ex) {
@@ -92,7 +91,7 @@ public class TelaRelatorios extends JFrame {
             try {
                 RelatorioVendasPagamento relatorio = new RelatorioVendasPagamento(vendaService, produtoService);
                 List<String[]> dados = relatorio.processarDados();
-                String[] cabecalho = relatorio.getCabecalho().split(";");
+                String[] cabecalho = relatorio.getCabecalho();
                 new TelaVisualizacaoRelatorio(this, "Relatório de Vendas por Pagamento", dados, cabecalho, relatorio)
                         .setVisible(true);
             } catch (Exception ex) {

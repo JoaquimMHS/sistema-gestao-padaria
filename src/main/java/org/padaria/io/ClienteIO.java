@@ -14,6 +14,7 @@ import java.util.List;
 
 public class ClienteIO implements ICSVReadable<Cliente> {
 
+    // usado pra colocar a data no padrão br
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
     @Override

@@ -67,12 +67,12 @@ public class Compra implements IEntity {
 
     @Override
     public int getCodigo() {
-        return 0;
+        return numeroNotaFiscal;
     }
 
     @Override
     public void setCodigo(int codigo) {
-
+        this.numeroNotaFiscal = codigo;
     }
 
     public boolean isValid() {

@@ -1,17 +1,9 @@
 package org.padaria.view;
 
-import java.awt.BorderLayout;
-import java.awt.CardLayout;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.GridLayout;
-
 import javax.swing.*;
+import java.awt.*;
 
 public class TelaInicial extends JFrame {
-
-    private CardLayout cardLayout;
-    private JPanel contentPanel;
 
     public TelaInicial() {
         setTitle("Sistema Padaria");
@@ -20,36 +12,16 @@ public class TelaInicial extends JFrame {
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
 
+        // Mantém o título no topo
         JLabel titulo = new JLabel("Sistema Padaria", SwingConstants.CENTER);
         titulo.setFont(new Font("Comic Sans MS", Font.BOLD, 26));
         titulo.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
         add(titulo, BorderLayout.NORTH);
 
-        JPanel menuPanel = new JPanel(new GridLayout(7, 1, 10, 10));
-        menuPanel.setBorder(BorderFactory.createEmptyBorder(20, 10, 20, 10));
-        menuPanel.setPreferredSize(new Dimension(180, 0));
+        // Cria e configura a barra de menus
+        configurarMenuBar();
 
-        JButton btnClientes = new JButton("Clientes");
-        JButton btnFornecedores = new JButton("Fornecedores");
-        JButton btnProdutos = new JButton("Produtos");
-        JButton btnVendas = new JButton("Vendas");
-        JButton btnCompras = new JButton("Compras");
-        JButton btnRelatorios = new JButton("Relatórios");
-        JButton btnSair = new JButton("Sair");
-
-        menuPanel.add(btnClientes);
-        menuPanel.add(btnFornecedores);
-        menuPanel.add(btnProdutos);
-        menuPanel.add(btnVendas);
-        menuPanel.add(btnCompras);
-        menuPanel.add(btnRelatorios);
-        menuPanel.add(btnSair);
-
-        add(menuPanel, BorderLayout.WEST);
-
-        cardLayout = new CardLayout();
-        contentPanel = new JPanel(cardLayout);
-
+        // Painel central com a mensagem de boas-vindas
         JLabel mensagem = new JLabel(
                 "<html><div style='text-align: center;'>Bem vindo ao Sistema<br/>feito por Eliaquim, Felicio, Joaquim, João Pedro e Nicolas</div></html>",
                 SwingConstants.CENTER);
@@ -57,39 +29,78 @@ public class TelaInicial extends JFrame {
         JPanel homePanel = new JPanel(new BorderLayout());
         homePanel.add(mensagem, BorderLayout.CENTER);
 
-        add(contentPanel, BorderLayout.CENTER);
+        add(homePanel, BorderLayout.CENTER);
+    }
 
-        btnClientes.addActionListener(e -> {
-            TelaCliente telaClientes = new TelaCliente(this);
-            telaClientes.setVisible(true);
-        });
-        btnFornecedores.addActionListener(e -> {
-            TelaFornecedor telaFornecedor = new TelaFornecedor(this);
-            telaFornecedor.setVisible(true);
-        });
-        btnProdutos.addActionListener(e -> {
-            TelaProduto telaProdutos = new TelaProduto(this);
-            telaProdutos.setVisible(true);
-        });
-        btnCompras.addActionListener(e -> {
-            TelaCompras telaCompras = new TelaCompras(this);
-            telaCompras.setVisible(true);
-        });
+    private void configurarMenuBar() {
+        JMenuBar menuBar = new JMenuBar();
 
-        btnVendas.addActionListener(e -> {
-            TelaVendas telaVendas = new TelaVendas(this);
-            telaVendas.setVisible(true);
-        });
+        // --- Menu Cadastro ---
+        JMenu menuCadastro = new JMenu("Cadastro");
+        JMenuItem itemClientes = new JMenuItem("Clientes");
+        JMenuItem itemFornecedores = new JMenuItem("Fornecedores");
+        JMenuItem itemProdutos = new JMenuItem("Produtos");
 
-        btnRelatorios.addActionListener(e -> {
-            TelaRelatorios telaRelatorios = new TelaRelatorios(this);
-            telaRelatorios.setVisible(true);
-        });
+        itemClientes.addActionListener(e -> new TelaCliente(this).setVisible(true));
+        itemFornecedores.addActionListener(e -> new TelaFornecedor(this).setVisible(true));
+        itemProdutos.addActionListener(e -> new TelaProduto(this).setVisible(true));
 
-        btnSair.addActionListener(e -> System.exit(0));
+        menuCadastro.add(itemClientes);
+        menuCadastro.add(itemFornecedores);
+        menuCadastro.add(itemProdutos);
+
+        // --- Menu Registro de Vendas ---
+        JMenu menuVendas = new JMenu("Registro de Vendas");
+        JMenuItem itemRegistrarVenda = new JMenuItem("Gerenciar Vendas");
+
+        itemRegistrarVenda.addActionListener(e ->
+                new TelaVendas(this).setVisible(true)
+        );
+        menuVendas.add(itemRegistrarVenda);
+        menuBar.add(menuVendas);
+
+
+        // --- Menu Controle de Contas ---
+        JMenu menuContas = new JMenu("Controle de Contas");
+        JMenuItem itemRegistrarCompra = new JMenuItem("Gerenciar Compras");
+        JMenuItem itemContasPagar = new JMenuItem("Visualizar Contas a Pagar (Compras)");
+        JMenuItem itemContasReceber = new JMenuItem("Visualizar Contas a Receber (Clientes)");
+
+        itemRegistrarCompra.addActionListener(e -> new TelaCompras(this).setVisible(true));
+        itemContasPagar.addActionListener(e -> JOptionPane.showMessageDialog(this, "Tela de Visualizar Compras (implementar)"));
+        itemContasReceber.addActionListener(e -> JOptionPane.showMessageDialog(this, "Tela de Visualizar Vendas (implementar)"));
+
+        menuContas.add(itemRegistrarCompra);
+        menuContas.add(itemContasPagar);
+        menuContas.add(itemContasReceber);
+
+        JMenu menuRelatorios = new JMenu("Geração de Relatórios Mensais");
+        JMenuItem itemGerarRelatorios = new JMenuItem("Abrir Tela de Relatórios");
+
+        itemGerarRelatorios.addActionListener(e -> new TelaRelatorios(this).setVisible(true));
+
+        menuRelatorios.add(itemGerarRelatorios);
+
+        // --- Menu Sistema (para a opção Sair) ---
+        JMenu menuSistema = new JMenu("Sistema");
+        JMenuItem itemSair = new JMenuItem("Sair");
+
+        itemSair.addActionListener(e -> System.exit(0));
+
+        menuSistema.add(itemSair);
+
+        // Adiciona os menus à barra de menus
+        menuBar.add(menuCadastro);
+        menuBar.add(menuVendas);
+        menuBar.add(menuContas);
+        menuBar.add(menuRelatorios);
+        menuBar.add(menuSistema);
+
+        // Define a barra de menus para a janela
+        setJMenuBar(menuBar);
     }
 
     public static void main(String[] args) {
-        new TelaInicial().setVisible(true);
+        SwingUtilities.invokeLater(() -> new TelaInicial().setVisible(true));
     }
 }

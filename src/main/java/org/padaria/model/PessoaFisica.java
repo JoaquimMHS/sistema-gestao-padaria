@@ -25,6 +25,11 @@ public class PessoaFisica extends Cliente {
     }
 
     @Override
+    public boolean isValid() {
+        return super.isValid() && cpf != null && !cpf.isEmpty();
+    }
+
+    @Override
     public String toString() {
         return super.toString() + " PessoaFisica [cpf=" + cpf + "]";
     }

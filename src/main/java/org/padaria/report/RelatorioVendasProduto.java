@@ -1,4 +1,3 @@
-// src/main/java/org/padaria/report/RelatorioVendasProduto.java
 package org.padaria.report;
 
 import org.padaria.model.Venda;
@@ -8,6 +7,7 @@ import org.padaria.service.VendaService;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -17,7 +17,6 @@ public class RelatorioVendasProduto implements IRelatorio {
     private final VendaService vendaService;
     private final ProdutoService produtoService;
 
-    // Classe interna estática para representar um item do relatório
     private static class RelatorioItemProduto {
         private final int codigoProduto;
         private final String descricaoProduto;
@@ -50,16 +49,18 @@ public class RelatorioVendasProduto implements IRelatorio {
     public void gerar(String nomeArquivo) throws IOException {
         System.out.println("Gerando relatório de vendas por produto...");
 
-        // Processa e obtém os dados já ordenados
-        List<String[]> dadosOrdenados = processarDados();
+        try (PrintWriter writer = new PrintWriter(new FileWriter(nomeArquivo))) {
+            String[] cabecalho = getCabecalho();
+            writer.println(String.join(";", cabecalho));
 
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter(nomeArquivo))) {
-            bw.write(getCabecalho());
-            bw.newLine();
-            for (String[] linha : dadosOrdenados) {
-                bw.write(String.join(";", linha));
-                bw.newLine();
+            List<String[]> dados = processarDados();
+            for (String[] linha : dados) {
+                writer.println(String.join(";", linha));
             }
+        } catch (IOException e) {
+            System.err.println("Erro ao gerar relatório de estoque: " + e.getMessage());
+            System.out.println("Erro de I/O.");
+            System.exit(1);
         }
         System.out.println("Relatório gerado com sucesso em: " + nomeArquivo);
     }
@@ -70,7 +71,6 @@ public class RelatorioVendasProduto implements IRelatorio {
                 .collect(Collectors.toMap(
                         Venda::getCodigoProduto,
                         venda -> {
-                            // Assumindo que você tem um método para obter a descrição do produto
                             String descricao = produtoService.getDescricao(venda.getCodigoProduto());
                             RelatorioItemProduto item = new RelatorioItemProduto(venda.getCodigoProduto(), descricao);
                             item.adicionarVenda(
@@ -102,7 +102,12 @@ public class RelatorioVendasProduto implements IRelatorio {
         return dadosOrdenados;
     }
     @Override
-    public String getCabecalho() {
-        return "codigo do produto;descricao do produto;receita bruta;lucro";
+    public String[] getCabecalho() {
+        return new String[]{
+                "codigo do produto",
+                "descricao do produto",
+                "receita bruta",
+                "lucro"
+        };
     }
 }

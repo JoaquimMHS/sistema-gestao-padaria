@@ -59,6 +59,6 @@ public class VendaIO implements ICSVReadable<Venda> {
         int codigoProduto = Integer.parseInt(campos[2]);
         int quantidade = Integer.parseInt(campos[3]);
         ModoPagamento modoPagamento = ModoPagamento.fromCaracter(campos[4].charAt(0));
-        return new Venda(0, codigoCliente, dataVenda, codigoProduto, quantidade, modoPagamento);
+        return new Venda(codigoCliente, dataVenda, codigoProduto, quantidade, modoPagamento);
     }
 }

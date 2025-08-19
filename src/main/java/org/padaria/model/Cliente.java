@@ -13,6 +13,7 @@ public abstract class Cliente implements IEntity {
     public Cliente() {
     }
 
+    // construtor
     public Cliente(int codigo, String nome, String endereco, String telefone, LocalDate dataCadastro,
             TipoCliente tipo) {
         this.codigo = codigo;

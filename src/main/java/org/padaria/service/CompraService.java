@@ -1,4 +1,3 @@
-// src/main/java/org/padaria/service/CompraService.java
 package org.padaria.service;
 
 import org.padaria.io.CompraIO;

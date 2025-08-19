@@ -24,9 +24,8 @@ public class TelaProduto extends JFrame {
 
     private JTable tabelaProdutos;
     private DefaultTableModel tableModel;
-    private JButton btnAdicionar, btnEditar, btnRemover, btnVoltar, btnRelatorio;
+    private JButton btnAdicionar, btnEditar, btnRemover, btnVoltar;
     private JTextField txtPesquisar;
-    private JCheckBox chkEstoqueBaixo; 
 
     public TelaProduto(JFrame parent) {
         this.parent = parent;
@@ -69,12 +68,8 @@ public class TelaProduto extends JFrame {
         JPanel panelBotoes = new JPanel(new FlowLayout(FlowLayout.LEFT));
         btnEditar = new JButton("Editar Selecionado");
         btnRemover = new JButton("Remover Selecionado");
-        btnRelatorio = new JButton("Gerar Relatorio");
-        chkEstoqueBaixo = new JCheckBox("Mostrar apenas estoque baixo");
         panelBotoes.add(btnEditar);
         panelBotoes.add(btnRemover);
-        panelBotoes.add(chkEstoqueBaixo);
-        panelBotoes.add(btnRelatorio);
 
         setLayout(new BorderLayout());
         add(panelTopo, BorderLayout.NORTH);
@@ -95,26 +90,6 @@ public class TelaProduto extends JFrame {
             produtoService.salvarDados(arquivoCSV); 
             parent.setVisible(true); 
             dispose();
-        });
-
-        btnRelatorio.addActionListener(e -> {
-            JFileChooser fileChooser = new JFileChooser();
-            fileChooser.setDialogTitle("Salvar Relatório de Estoque");
-            int userSelection = fileChooser.showSaveDialog(this);
-            if (userSelection == JFileChooser.APPROVE_OPTION) {
-                String path = fileChooser.getSelectedFile().getAbsolutePath();
-//                RelatorioEstoque relatorio = new RelatorioEstoque(produtoService.listar());
-//                relatorio.gerar(path);
-                JOptionPane.showMessageDialog(this, "Relatório gerado com sucesso!");
-            }
-        });
-
-        chkEstoqueBaixo.addActionListener(e -> {
-            if (chkEstoqueBaixo.isSelected()) {
-                carregarDadosNaTabela(produtoService.listarEstoqueBaixo());
-            } else {
-                atualizarTabela();
-            }
         });
 
         btnAdicionar.addActionListener(e -> {
@@ -144,16 +119,11 @@ public class TelaProduto extends JFrame {
     }
 
     public void atualizarTabela() {
-        if (chkEstoqueBaixo.isSelected()) {
-            carregarDadosNaTabela(produtoService.listarEstoqueBaixo());
-        } else {
             carregarDadosNaTabela(produtoService.listar());
-        }
         txtPesquisar.setText("");
     }
 
     private void filtrarTabela() {
-        chkEstoqueBaixo.setSelected(false);
         String textoBusca = txtPesquisar.getText().trim();
         if (textoBusca.isEmpty()) {
             atualizarTabela();

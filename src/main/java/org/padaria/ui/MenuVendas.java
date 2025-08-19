@@ -61,7 +61,7 @@ public class MenuVendas {
             codigoCliente = Integer.parseInt(scanner.nextLine());
         }
 
-        Venda novaVenda = new Venda(0, codigoCliente, data, codigoProduto, quantidade, modo);
+        Venda novaVenda = new Venda(codigoCliente, data, codigoProduto, quantidade, modo);
         vendaService.cadastrar(novaVenda);
         System.out.println("Venda registrada com sucesso!");
     }

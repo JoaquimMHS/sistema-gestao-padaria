@@ -3,7 +3,6 @@ package org.padaria.model;
 import java.time.LocalDate;
 
 public class Venda implements IEntity {
-    private int codigo;
     private Integer codigoCliente;
     private LocalDate dataVenda;
     private int codigoProduto;
@@ -12,8 +11,7 @@ public class Venda implements IEntity {
 
     public Venda() {}
 
-    public Venda(int codigo, Integer codigoCliente, LocalDate dataVenda, int codigoProduto, int quantidade, ModoPagamento modoPagamento) {
-        this.codigo = codigo;
+    public Venda(Integer codigoCliente, LocalDate dataVenda, int codigoProduto, int quantidade, ModoPagamento modoPagamento) {
         this.codigoCliente = codigoCliente;
         this.dataVenda = dataVenda;
         this.codigoProduto = codigoProduto;
@@ -22,7 +20,8 @@ public class Venda implements IEntity {
     }
 
     // Getters
-    public int getCodigo() { return codigo; }
+    @Override
+    public int getCodigo() { return codigoCliente; }
     public Integer getCodigoCliente() { return codigoCliente; }
     public LocalDate getDataVenda() { return dataVenda; }
     public int getCodigoProduto() { return codigoProduto; }
@@ -30,7 +29,8 @@ public class Venda implements IEntity {
     public ModoPagamento getModoPagamento() { return modoPagamento; }
 
     // Setters
-    public void setCodigo(int codigo) { this.codigo = codigo; }
+    @Override
+    public void setCodigo(int codigo) { this.codigoCliente = codigo; }
     public void setCodigoCliente(Integer codigoCliente) { this.codigoCliente = codigoCliente; }
     public void setDataVenda(LocalDate dataVenda) { this.dataVenda = dataVenda; }
     public void setCodigoProduto(int codigoProduto) { this.codigoProduto = codigoProduto; }
@@ -52,7 +52,6 @@ public class Venda implements IEntity {
     @Override
     public String toString() {
         return "Venda{" +
-                "codigo=" + codigo +
                 ", codigoCliente=" + (codigoCliente != null ? codigoCliente : "N/A") +
                 ", dataVenda=" + dataVenda +
                 ", codigoProduto=" + codigoProduto +

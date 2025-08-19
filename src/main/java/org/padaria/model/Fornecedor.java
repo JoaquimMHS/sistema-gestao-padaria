@@ -49,7 +49,7 @@ public class Fornecedor implements IEntity {
 
     @Override
     public boolean isValid() {
-        return false;
+        return this.codigo > 0 && this.nome != null && !this.nome.trim().isEmpty() && this.CNPJ != null && !this.CNPJ.trim().isEmpty();
     }
 
     public void setNome(String nome) {

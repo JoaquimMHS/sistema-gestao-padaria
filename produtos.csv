@@ -1,8 +1,2 @@
 codigo;descricao;estoque_minimo;estoque_atual;valor_custo;percentual_lucro
-101;Pao Frances;50;40;0.2;150
-102;Leite Integral 1L;20;15;4.5;30
-103;pirulito;50;10;10.0;20
-104;bala;40;50;40.0;10
-105;queijo;20;15;12.0;10
-1;Doce;100;10;15.0;100
-1;picanha;1;1;10.0;1000
+1;Mouse;3;5;10.0;10

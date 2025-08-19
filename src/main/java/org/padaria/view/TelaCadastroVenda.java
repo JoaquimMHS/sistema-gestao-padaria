@@ -1,39 +1,36 @@
-// src/main/java/org/padaria/view/TelaCadastroVenda.java
 package org.padaria.view;
 
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-import java.awt.Frame;
-import java.awt.GridLayout;
+import org.padaria.model.Cliente;
+import org.padaria.model.ModoPagamento;
+import org.padaria.model.Produto;
+import org.padaria.model.Venda;
+import org.padaria.service.ClienteService;
+import org.padaria.service.ProdutoService;
+import org.padaria.service.VendaService;
+
+import javax.swing.*;
+import java.awt.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import org.padaria.model.ModoPagamento;
-import org.padaria.model.Venda;
-import org.padaria.service.VendaService;
 
 public class TelaCadastroVenda extends JDialog {
 
     private final VendaService vendaService;
+    private final ClienteService clienteService;
+    private final ProdutoService produtoService;
     private final Runnable onSaveCallback;
-    private final Venda vendaParaEditar;
 
     private JLabel lblCodigoValor;
     private JTextField txtCodigoCliente, txtDataVenda, txtCodigoProduto, txtQuantidade, txtModoPagamento;
     private JButton btnSalvar;
 
-    public TelaCadastroVenda(Frame owner, VendaService service, Runnable onSaveCallback, Venda vendaParaEditar) {
-        super(owner, "Dados da Venda", true);
+    public TelaCadastroVenda(Frame owner, VendaService vService, ClienteService cService, ProdutoService pService, Runnable onSaveCallback) {
+        super(owner, "Registrar Nova Venda", true);
 
-        this.vendaService = service;
+        this.vendaService = vService;
+        this.clienteService = cService;
+        this.produtoService = pService;
         this.onSaveCallback = onSaveCallback;
-        this.vendaParaEditar = vendaParaEditar;
 
         setSize(400, 300);
         setLocationRelativeTo(owner);
@@ -42,28 +39,24 @@ public class TelaCadastroVenda extends JDialog {
         inicializarComponentes();
         adicionarListeners();
 
-        if (vendaParaEditar != null) {
-            setTitle("Editar Venda");
-            preencherCamposParaEdicao();
-        } else {
-            setTitle("Registrar Nova Venda");
-        }
+        lblCodigoValor.setText("(Automático)");
     }
 
     private void inicializarComponentes() {
         JPanel panelForm = new JPanel(new GridLayout(6, 2, 5, 10));
         panelForm.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        panelForm.add(new JLabel("Código:"));
-        lblCodigoValor = new JLabel("Auto-gerado");
+        panelForm.add(new JLabel("Código Venda:"));
+        lblCodigoValor = new JLabel();
+        lblCodigoValor.setFont(new Font("Arial", Font.BOLD, 14));
         panelForm.add(lblCodigoValor);
 
-        panelForm.add(new JLabel("Cód. Cliente (opcional):"));
+        panelForm.add(new JLabel("Cód. Cliente (obrigatório se Fiado):"));
         txtCodigoCliente = new JTextField();
         panelForm.add(txtCodigoCliente);
 
         panelForm.add(new JLabel("Data Venda (YYYY-MM-DD):"));
-        txtDataVenda = new JTextField();
+        txtDataVenda = new JTextField(LocalDate.now().toString());
         panelForm.add(txtDataVenda);
 
         panelForm.add(new JLabel("Cód. Produto:"));
@@ -90,55 +83,62 @@ public class TelaCadastroVenda extends JDialog {
         btnSalvar.addActionListener(e -> salvarVenda());
     }
 
-    private void preencherCamposParaEdicao() {
-        lblCodigoValor.setText(String.valueOf(vendaParaEditar.getCodigo()));
-        if (vendaParaEditar.getCodigoCliente() != null) {
-            txtCodigoCliente.setText(String.valueOf(vendaParaEditar.getCodigoCliente()));
-        }
-        txtDataVenda.setText(vendaParaEditar.getDataVenda().toString());
-        txtCodigoProduto.setText(String.valueOf(vendaParaEditar.getCodigoProduto()));
-        txtQuantidade.setText(String.valueOf(vendaParaEditar.getQuantidade()));
-        txtModoPagamento.setText(String.valueOf(vendaParaEditar.getModoPagamento().getCaracter()));
-    }
-
     private void salvarVenda() {
         try {
-            // Validações
+            // Validação de campos obrigatórios
             if (txtDataVenda.getText().trim().isEmpty() || txtCodigoProduto.getText().trim().isEmpty() || txtQuantidade.getText().trim().isEmpty() || txtModoPagamento.getText().trim().isEmpty()) {
-                JOptionPane.showMessageDialog(this, "Todos os campos obrigatórios devem ser preenchidos.", "Erro de Validação", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Os campos Data, Produto, Quantidade e Pagamento são obrigatórios.", "Erro de Validação", JOptionPane.ERROR_MESSAGE);
                 return;
             }
 
-            LocalDate dataVenda = LocalDate.parse(txtDataVenda.getText());
-            int codigoProduto = Integer.parseInt(txtCodigoProduto.getText());
-            int quantidade = Integer.parseInt(txtQuantidade.getText());
-            ModoPagamento modoPagamento = ModoPagamento.fromCaracter(txtModoPagamento.getText().charAt(0));
+            // Coleta de dados e conversão inicial
+            int codigoProduto = Integer.parseInt(txtCodigoProduto.getText().trim());
+            int quantidade = Integer.parseInt(txtQuantidade.getText().trim());
+            ModoPagamento modoPagamento = ModoPagamento.fromCaracter(txtModoPagamento.getText().trim().toUpperCase().charAt(0));
 
+            // Validação de existência do produto
+            Produto produto = produtoService.buscar(codigoProduto);
+            if (produto == null) {
+                JOptionPane.showMessageDialog(this, "Erro: Produto com código " + codigoProduto + " não encontrado.", "Erro de Validação", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            // Validação de existência do cliente (se um código for inserido)
             Integer codigoCliente = null;
             if (!txtCodigoCliente.getText().trim().isEmpty()) {
-                codigoCliente = Integer.parseInt(txtCodigoCliente.getText());
+                codigoCliente = Integer.parseInt(txtCodigoCliente.getText().trim());
+                Cliente cliente = clienteService.buscar(codigoCliente);
+                if (cliente == null) {
+                    JOptionPane.showMessageDialog(this, "Erro: Cliente com código " + codigoCliente + " não encontrado.", "Erro de Validação", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
             }
 
-            if (vendaParaEditar != null) {
-                Venda vendaAtualizada = new Venda(vendaParaEditar.getCodigo(), codigoCliente, dataVenda, codigoProduto, quantidade, modoPagamento);
-                vendaService.atualizar(vendaAtualizada);
-                JOptionPane.showMessageDialog(this, "Venda atualizada com sucesso!");
-            } else {
-                Venda novaVenda = new Venda(0, codigoCliente, dataVenda, codigoProduto, quantidade, modoPagamento);
-                vendaService.cadastrar(novaVenda);
-                JOptionPane.showMessageDialog(this, "Venda registrada com sucesso!");
+            // Validação da regra de negócio para pagamento fiado
+            if (modoPagamento == ModoPagamento.FIADO && codigoCliente == null) {
+                JOptionPane.showMessageDialog(this, "Para vendas no modo 'Fiado', o Código do Cliente é obrigatório.", "Erro de Validação", JOptionPane.ERROR_MESSAGE);
+                return;
             }
+
+            LocalDate dataVenda = LocalDate.parse(txtDataVenda.getText().trim());
+
+            // Criação e registro da venda
+            Venda novaVenda = new Venda(codigoCliente, dataVenda, codigoProduto, quantidade, modoPagamento);
+            vendaService.cadastrar(novaVenda);
+            JOptionPane.showMessageDialog(this, "Venda registrada com sucesso!");
 
             if (onSaveCallback != null) {
-                onSaveCallback.run();
+                onSaveCallback.run(); // Atualiza a tabela da tela anterior
             }
 
-            dispose();
+            dispose(); // Fecha a janela de cadastro
 
-        } catch (NumberFormatException | DateTimeParseException ex) {
-            JOptionPane.showMessageDialog(this, "Por favor, verifique o formato dos campos numéricos ou da data.", "Erro de Formato", JOptionPane.ERROR_MESSAGE);
-        } catch (IllegalArgumentException ex) {
-            JOptionPane.showMessageDialog(this, ex.getMessage(), "Erro de Validação", JOptionPane.ERROR_MESSAGE);
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(this, "Por favor, verifique o formato dos campos numéricos.", "Erro de Formato", JOptionPane.ERROR_MESSAGE);
+        } catch (DateTimeParseException ex) {
+            JOptionPane.showMessageDialog(this, "O formato da data é inválido. Use AAAA-MM-DD.", "Erro de Formato", JOptionPane.ERROR_MESSAGE);
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, "Ocorreu um erro: " + ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
         }
     }
 }

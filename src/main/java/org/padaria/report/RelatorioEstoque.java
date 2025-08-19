@@ -3,9 +3,10 @@ package org.padaria.report;
 import org.padaria.model.Produto;
 import org.padaria.service.ProdutoService;
 
-import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -18,15 +19,18 @@ public class RelatorioEstoque implements IRelatorio {
 
     @Override
     public void gerar(String nomeArquivo) throws IOException {
-        System.out.println("Gerando relatório de estoque...");
-        List<String[]> dados = processarDados();
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter(nomeArquivo))) {
-            bw.write(getCabecalho());
-            bw.newLine();
+        System.out.println("Gerando relatório de estoque");
+        try (PrintWriter writer = new PrintWriter(new FileWriter(nomeArquivo))) {
+            String[] cabecalho = getCabecalho();
+            writer.println(String.join(";", cabecalho));
+
+            List<String[]> dados = processarDados();
             for (String[] linha : dados) {
-                bw.write(String.join(";", linha));
-                bw.newLine();
+                writer.println(String.join(";", linha));
             }
+        } catch (IOException e) {
+            System.out.println("Erro de I/O.");
+            System.exit(1);
         }
         System.out.println("Relatório de estoque gerado em: " + nomeArquivo);
     }
@@ -34,6 +38,7 @@ public class RelatorioEstoque implements IRelatorio {
     @Override
     public List<String[]> processarDados() {
         return produtoService.listar().stream()
+                .sorted(Comparator.comparing(Produto::getDescricao))
                 .map(p -> {
                     String observacao = p.getEstoqueAtual() < p.getEstoqueMinimo() ? "COMPRAR MAIS" : "";
                     return new String[] {
@@ -47,7 +52,12 @@ public class RelatorioEstoque implements IRelatorio {
     }
 
     @Override
-    public String getCabecalho() {
-        return "codigo do produto;descricao do produto;quantidade em estoque;observacoes";
+    public String[] getCabecalho() {
+        return new String[]{
+                "código do produto",
+                "descrição do produto",
+                "quantidade em estoque",
+                "observações"
+        };
     }
 }

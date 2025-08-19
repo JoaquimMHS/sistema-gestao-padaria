@@ -7,5 +7,5 @@ import java.util.List;
 public interface IRelatorio {
     void gerar(String nomeArquivo) throws IOException;
     List<String[]> processarDados();
-    String getCabecalho(); // O tipo de retorno deve ser String
+    String[] getCabecalho();
 }
