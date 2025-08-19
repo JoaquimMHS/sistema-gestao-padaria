@@ -12,23 +12,32 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import org.padaria.model.Compra;
+import org.padaria.model.Fornecedor;
+import org.padaria.model.Produto;
 import org.padaria.service.CompraService;
+import org.padaria.service.FornecedorService;
+import org.padaria.service.ProdutoService;
 
 public class TelaCadastroCompra extends JDialog {
 
     private final CompraService compraService;
+    private final FornecedorService fornecedorService;
+    private final ProdutoService produtoService;
     private final Runnable onSaveCallback;
-    private final Compra compraParaEditar;
 
     private JTextField txtNumeroNF, txtCodigoFornecedor, txtDataCompra, txtCodigoProduto, txtQuantidade;
     private JButton btnSalvar;
 
-    public TelaCadastroCompra(Frame owner, CompraService service, Runnable onSaveCallback, Compra compraParaEditar) {
+    public TelaCadastroCompra(Frame owner, CompraService compraService,
+            FornecedorService fornecedorService,
+            ProdutoService produtoService,
+            Runnable onSaveCallback) {
         super(owner, true);
 
-        this.compraService = service;
+        this.compraService = compraService;
+        this.fornecedorService = fornecedorService;
+        this.produtoService = produtoService;
         this.onSaveCallback = onSaveCallback;
-        this.compraParaEditar = compraParaEditar;
 
         setSize(400, 300);
         setLocationRelativeTo(owner);
@@ -37,7 +46,8 @@ public class TelaCadastroCompra extends JDialog {
         inicializarComponentes();
         adicionarListeners();
 
-            setTitle("Registrar Nova Compra");
+        setTitle("Registrar Nova Compra");
+        txtDataCompra.setText(LocalDate.now().toString());
     }
 
     private void inicializarComponentes() {
@@ -56,10 +66,13 @@ public class TelaCadastroCompra extends JDialog {
 
         panelForm.add(new JLabel("Cód. Fornecedor:"));
         panelForm.add(txtCodigoFornecedor);
+
         panelForm.add(new JLabel("Data Compra (YYYY-MM-DD):"));
         panelForm.add(txtDataCompra);
+
         panelForm.add(new JLabel("Cód. Produto:"));
         panelForm.add(txtCodigoProduto);
+
         panelForm.add(new JLabel("Quantidade:"));
         panelForm.add(txtQuantidade);
 
@@ -71,36 +84,90 @@ public class TelaCadastroCompra extends JDialog {
         add(panelBotao, BorderLayout.SOUTH);
     }
 
-    private void preencherFormularioParaEdicao() {
-        txtNumeroNF.setText(String.valueOf(compraParaEditar.getNumeroNotaFiscal()));
-        txtNumeroNF.setEnabled(false);
-        txtCodigoFornecedor.setText(String.valueOf(compraParaEditar.getCodigoFornecedor()));
-        txtDataCompra.setText(compraParaEditar.getDataCompra().format(DateTimeFormatter.ISO_LOCAL_DATE));
-        txtCodigoProduto.setText(String.valueOf(compraParaEditar.getCodigoProduto()));
-        txtQuantidade.setText(String.valueOf(compraParaEditar.getQuantidade()));
-    }
-
     private void adicionarListeners() {
         btnSalvar.addActionListener(e -> salvarCompra());
     }
 
     private void salvarCompra() {
         try {
-            // Validações
-            if (txtNumeroNF.getText().trim().isEmpty() || txtCodigoFornecedor.getText().trim().isEmpty() || txtDataCompra.getText().trim().isEmpty() || txtCodigoProduto.getText().trim().isEmpty() || txtQuantidade.getText().trim().isEmpty()) {
-                JOptionPane.showMessageDialog(this, "Todos os campos devem ser preenchidos.", "Erro de Validação", JOptionPane.ERROR_MESSAGE);
+            // Validação de campos obrigatórios
+            if (txtNumeroNF.getText().trim().isEmpty() ||
+                    txtCodigoFornecedor.getText().trim().isEmpty() ||
+                    txtDataCompra.getText().trim().isEmpty() ||
+                    txtCodigoProduto.getText().trim().isEmpty() ||
+                    txtQuantidade.getText().trim().isEmpty()) {
+
+                JOptionPane.showMessageDialog(this,
+                        "Todos os campos devem ser preenchidos.",
+                        "Erro de Validação", JOptionPane.ERROR_MESSAGE);
                 return;
             }
 
-            int numeroNF = Integer.parseInt(txtNumeroNF.getText());
-            int codigoFornecedor = Integer.parseInt(txtCodigoFornecedor.getText());
-            LocalDate dataCompra = LocalDate.parse(txtDataCompra.getText());
-            int codigoProduto = Integer.parseInt(txtCodigoProduto.getText());
-            int quantidade = Integer.parseInt(txtQuantidade.getText());
+            // Coleta e conversão dos dados
+            int numeroNF = Integer.parseInt(txtNumeroNF.getText().trim());
+            int codigoFornecedor = Integer.parseInt(txtCodigoFornecedor.getText().trim());
+            LocalDate dataCompra = LocalDate.parse(txtDataCompra.getText().trim());
+            int codigoProduto = Integer.parseInt(txtCodigoProduto.getText().trim());
+            int quantidade = Integer.parseInt(txtQuantidade.getText().trim());
 
-                Compra novaCompra = new Compra(numeroNF, codigoFornecedor, dataCompra, codigoProduto, quantidade);
-                compraService.cadastrar(novaCompra);
-                JOptionPane.showMessageDialog(this, "Compra registrada com sucesso!");
+            // Validação de valores positivos
+            if (numeroNF <= 0 || codigoFornecedor <= 0 || codigoProduto <= 0 || quantidade <= 0) {
+                JOptionPane.showMessageDialog(this,
+                        "Todos os valores numéricos devem ser positivos.",
+                        "Erro de Validação", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            // Validação de existência do fornecedor
+            Fornecedor fornecedor = fornecedorService.buscar(codigoFornecedor);
+            if (fornecedor == null) {
+                JOptionPane.showMessageDialog(this,
+                        "Erro: Fornecedor com código " + codigoFornecedor + " não encontrado.",
+                        "Erro de Validação", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            // Validação de existência do produto
+            Produto produto = produtoService.buscar(codigoProduto);
+            if (produto == null) {
+                JOptionPane.showMessageDialog(this,
+                        "Erro: Produto com código " + codigoProduto + " não encontrado.",
+                        "Erro de Validação", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            // Validação de número da NF duplicado
+            Compra compraExistente = compraService.buscar(numeroNF);
+            if (compraExistente != null) {
+                JOptionPane.showMessageDialog(this,
+                        "Erro: Já existe uma compra com o número de NF " + numeroNF + ".",
+                        "Erro de Validação", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            // Criação e registro da compra
+            Compra novaCompra = new Compra(numeroNF, codigoFornecedor, dataCompra, codigoProduto, quantidade);
+
+            compraService.cadastrar(novaCompra);
+
+            // Atualiza o estoque do produto (adiciona a quantidade comprada)
+            produtoService.atualizarEstoque(codigoProduto, quantidade);
+
+            try {
+                produtoService.salvarDados("produtos.csv");
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(this,
+                        "Erro ao salvar estoque do produto: " + ex.getMessage(),
+                        "Erro ao Salvar Estoque", JOptionPane.ERROR_MESSAGE);
+            }
+
+            JOptionPane.showMessageDialog(this,
+                    String.format("Compra registrada com sucesso!%n" +
+                            "Fornecedor: %s%n" +
+                            "Produto: %s%n" +
+                            "Quantidade: %d%n" +
+                            "Estoque atualizado com sucesso!",
+                            fornecedor.getNome(), produto.getDescricao(), quantidade));
 
             if (onSaveCallback != null) {
                 onSaveCallback.run();
@@ -109,9 +176,17 @@ public class TelaCadastroCompra extends JDialog {
             dispose();
 
         } catch (NumberFormatException ex) {
-            JOptionPane.showMessageDialog(this, "Por favor, verifique se os campos numéricos contêm apenas números.", "Erro de Formato", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this,
+                    "Por favor, verifique se os campos numéricos contêm apenas números válidos.",
+                    "Erro de Formato", JOptionPane.ERROR_MESSAGE);
         } catch (DateTimeParseException ex) {
-            JOptionPane.showMessageDialog(this, "O formato da data deve ser YYYY-MM-DD (ex: 2025-08-19).", "Erro de Formato de Data", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this,
+                    "O formato da data deve ser YYYY-MM-DD (ex: 2025-08-19).",
+                    "Erro de Formato de Data", JOptionPane.ERROR_MESSAGE);
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this,
+                    "Ocorreu um erro inesperado: " + ex.getMessage(),
+                    "Erro", JOptionPane.ERROR_MESSAGE);
         }
     }
 }

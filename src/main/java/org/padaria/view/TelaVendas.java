@@ -13,7 +13,6 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.List;
 
-
 public class TelaVendas extends JFrame {
 
     private final JFrame parent;
@@ -21,6 +20,7 @@ public class TelaVendas extends JFrame {
     private final ClienteService clienteService;
     private final ProdutoService produtoService;
     private final String arquivoCSV = "vendas.csv";
+    private final String arquivoProdutosCSV = "produtos.csv";
 
     private JTable tabelaVendas;
     private DefaultTableModel tableModel;
@@ -36,8 +36,10 @@ public class TelaVendas extends JFrame {
         // Carrega os dados do arquivo CSV ao abrir a tela
         try {
             vendaService.carregarDados(arquivoCSV);
+            produtoService.carregarDados(arquivoProdutosCSV);
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Erro ao carregar dados de vendas: " + e.getMessage(), "Erro de Carga", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Erro ao carregar dados de vendas: " + e.getMessage(), "Erro de Carga",
+                    JOptionPane.ERROR_MESSAGE);
         }
 
         setTitle("Gestão de Vendas");
@@ -68,12 +70,13 @@ public class TelaVendas extends JFrame {
 
         // Ação do botão adicionar: abre a tela de cadastro
         btnAdicionar.addActionListener(e -> {
-            TelaCadastroVenda telaCadastro = new TelaCadastroVenda(this, vendaService, clienteService, produtoService, this::atualizarTabela);
+            TelaCadastroVenda telaCadastro = new TelaCadastroVenda(this, vendaService, clienteService, produtoService,
+                    this::atualizarTabela);
             telaCadastro.setVisible(true);
         });
 
         // Configuração da tabela de vendas
-        String[] colunas = {"Código", "Cód. Cliente", "Data Venda", "Cód. Produto", "Quantidade", "Pagamento"};
+        String[] colunas = { "Cód. Cliente", "Data Venda", "Cód. Produto", "Quantidade", "Pagamento" };
         tableModel = new DefaultTableModel(colunas, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -90,7 +93,6 @@ public class TelaVendas extends JFrame {
     }
 
     private void adicionarListeners() {
-        // Garante que os dados sejam salvos ao fechar a janela no "X"
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
@@ -102,21 +104,24 @@ public class TelaVendas extends JFrame {
     private void salvarEFechar() {
         try {
             vendaService.salvarDados(arquivoCSV);
+            produtoService.salvarDados(arquivoProdutosCSV);
         } catch (Exception ex) {
-            JOptionPane.showMessageDialog(this, "Erro ao salvar dados de vendas: " + ex.getMessage(), "Erro de Salvamento", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Erro ao salvar dados: " + ex.getMessage(), "Erro de Salvamento",
+                    JOptionPane.ERROR_MESSAGE);
         }
-        // parent.setVisible(true); // Descomente se quiser que a tela anterior reapareça
+        // parent.setVisible(true); // Descomente se quiser que a tela anterior
+        // reapareça
         dispose(); // Fecha esta janela
     }
 
     // Carrega a lista de vendas do serviço para a tabela na UI
     private void carregarDadosNaTabela(List<Venda> vendas) {
         tableModel.setRowCount(0); // Limpa a tabela
-        if (vendas == null) return;
+        if (vendas == null)
+            return;
 
         for (Venda v : vendas) {
-            tableModel.addRow(new Object[]{
-                    v.getCodigo(),
+            tableModel.addRow(new Object[] {
                     v.getCodigoCliente() != null ? v.getCodigoCliente() : "N/A",
                     v.getDataVenda(),
                     v.getCodigoProduto(),
@@ -126,7 +131,8 @@ public class TelaVendas extends JFrame {
         }
     }
 
-    // Método público que pode ser chamado pela TelaCadastroVenda para atualizar a lista
+    // Método público que pode ser chamado pela TelaCadastroVenda para atualizar a
+    // lista
     public void atualizarTabela() {
         carregarDadosNaTabela(vendaService.listar());
     }

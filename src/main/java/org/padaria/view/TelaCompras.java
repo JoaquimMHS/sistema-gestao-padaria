@@ -19,26 +19,38 @@ import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
 import org.padaria.model.Compra;
 import org.padaria.service.CompraService;
+import org.padaria.service.FornecedorService;
+import org.padaria.service.ProdutoService;
 
+// ...existing code...
 public class TelaCompras extends JFrame {
 
     private final JFrame parent;
     private final CompraService compraService;
+    private final FornecedorService fornecedorService;
+    private final ProdutoService produtoService;
     private final String arquivoCSV = "compras.csv";
+    private final String fornecedorCSV = "fornecedores.csv";
+    private final String produtoCSV = "produtos.csv";
 
     private JTable tabelaCompras;
     private DefaultTableModel tableModel;
-    private JButton btnAdicionar, btnEditar, btnRemover, btnVoltar;
+    private JButton btnAdicionar, btnVoltar;
     private JTextField txtPesquisar;
 
     public TelaCompras(JFrame parent) {
         this.parent = parent;
         this.compraService = new CompraService();
+        this.fornecedorService = new FornecedorService();
+        this.produtoService = new ProdutoService();
 
         try {
             compraService.carregarDados(arquivoCSV);
+            fornecedorService.carregarDados(fornecedorCSV);
+            produtoService.carregarDados(produtoCSV);
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Erro ao carregar dados de compras: " + e.getMessage(), "Erro de Carga", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Erro ao carregar dados de compras: " + e.getMessage(), "Erro de Carga",
+                    JOptionPane.ERROR_MESSAGE);
         }
 
         setTitle("Gestão de Compras");
@@ -59,14 +71,15 @@ public class TelaCompras extends JFrame {
         btnVoltar = new JButton("<- Voltar");
         panelTopo.add(btnVoltar, BorderLayout.WEST);
 
-
         btnAdicionar = new JButton("Adicionar Compra +");
         panelTopo.add(btnAdicionar, BorderLayout.EAST);
 
-        String[] colunas = {"Nº NF", "Cód. Fornecedor", "Data Compra", "Cód. Produto", "Quantidade"};
+        String[] colunas = { "Nº NF", "Cód. Fornecedor", "Data Compra", "Cód. Produto", "Quantidade" };
         tableModel = new DefaultTableModel(colunas, 0) {
             @Override
-            public boolean isCellEditable(int row, int column) { return false; }
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
         };
         tabelaCompras = new JTable(tableModel);
         JScrollPane scrollPane = new JScrollPane(tabelaCompras);
@@ -89,7 +102,8 @@ public class TelaCompras extends JFrame {
         });
 
         btnAdicionar.addActionListener(e -> {
-            TelaCadastroCompra telaCadastro = new TelaCadastroCompra(this, compraService, this::atualizarTabela, null);
+            TelaCadastroCompra telaCadastro = new TelaCadastroCompra(this, compraService, fornecedorService,
+                    produtoService, this::atualizarTabela);
             telaCadastro.setVisible(true);
         });
     }
@@ -98,7 +112,8 @@ public class TelaCompras extends JFrame {
         try {
             compraService.salvarDados(arquivoCSV);
         } catch (Exception ex) {
-            JOptionPane.showMessageDialog(this, "Erro ao salvar dados de compras: " + ex.getMessage(), "Erro de Salvamento", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Erro ao salvar dados de compras: " + ex.getMessage(),
+                    "Erro de Salvamento", JOptionPane.ERROR_MESSAGE);
         }
         parent.setVisible(true);
         dispose();
@@ -107,8 +122,9 @@ public class TelaCompras extends JFrame {
     private void carregarDadosNaTabela(List<Compra> compras) {
         tableModel.setRowCount(0);
         for (Compra c : compras) {
-            tableModel.addRow(new Object[]{
-                    c.getNumeroNotaFiscal(), c.getCodigoFornecedor(), c.getDataCompra(), c.getCodigoProduto(), c.getQuantidade()
+            tableModel.addRow(new Object[] {
+                    c.getNumeroNotaFiscal(), c.getCodigoFornecedor(), c.getDataCompra(), c.getCodigoProduto(),
+                    c.getQuantidade()
             });
         }
     }

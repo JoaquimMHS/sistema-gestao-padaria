@@ -3,15 +3,19 @@ package org.padaria.model;
 import java.time.LocalDate;
 
 public class Venda implements IEntity {
+    private int codigoVenda;
     private Integer codigoCliente;
     private LocalDate dataVenda;
     private int codigoProduto;
     private int quantidade;
     private ModoPagamento modoPagamento;
 
-    public Venda() {}
+    public Venda() {
+    }
 
-    public Venda(Integer codigoCliente, LocalDate dataVenda, int codigoProduto, int quantidade, ModoPagamento modoPagamento) {
+    public Venda(Integer codigoCliente, LocalDate dataVenda, int codigoProduto, int quantidade,
+            ModoPagamento modoPagamento) {
+        this.codigoVenda = codigoVenda;
         this.codigoCliente = codigoCliente;
         this.dataVenda = dataVenda;
         this.codigoProduto = codigoProduto;
@@ -21,21 +25,55 @@ public class Venda implements IEntity {
 
     // Getters
     @Override
-    public int getCodigo() { return codigoCliente; }
-    public Integer getCodigoCliente() { return codigoCliente; }
-    public LocalDate getDataVenda() { return dataVenda; }
-    public int getCodigoProduto() { return codigoProduto; }
-    public int getQuantidade() { return quantidade; }
-    public ModoPagamento getModoPagamento() { return modoPagamento; }
+    public int getCodigo() {
+        return codigoVenda;
+    }
+
+    public Integer getCodigoCliente() {
+        return codigoCliente;
+    }
+
+    public LocalDate getDataVenda() {
+        return dataVenda;
+    }
+
+    public int getCodigoProduto() {
+        return codigoProduto;
+    }
+
+    public int getQuantidade() {
+        return quantidade;
+    }
+
+    public ModoPagamento getModoPagamento() {
+        return modoPagamento;
+    }
 
     // Setters
     @Override
-    public void setCodigo(int codigo) { this.codigoCliente = codigo; }
-    public void setCodigoCliente(Integer codigoCliente) { this.codigoCliente = codigoCliente; }
-    public void setDataVenda(LocalDate dataVenda) { this.dataVenda = dataVenda; }
-    public void setCodigoProduto(int codigoProduto) { this.codigoProduto = codigoProduto; }
-    public void setQuantidade(int quantidade) { this.quantidade = quantidade; }
-    public void setModoPagamento(ModoPagamento modoPagamento) { this.modoPagamento = modoPagamento; }
+    public void setCodigo(int codigo) {
+        this.codigoVenda = codigo;
+    }
+
+    public void setCodigoCliente(Integer codigoCliente) {
+        this.codigoCliente = codigoCliente;
+    }
+
+    public void setDataVenda(LocalDate dataVenda) {
+        this.dataVenda = dataVenda;
+    }
+
+    public void setCodigoProduto(int codigoProduto) {
+        this.codigoProduto = codigoProduto;
+    }
+
+    public void setQuantidade(int quantidade) {
+        this.quantidade = quantidade;
+    }
+
+    public void setModoPagamento(ModoPagamento modoPagamento) {
+        this.modoPagamento = modoPagamento;
+    }
 
     public double calcularValorVenda(double valorUnitario) {
         return this.quantidade * valorUnitario;

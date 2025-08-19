@@ -103,6 +103,12 @@ public class TelaCadastroVenda extends JDialog {
                 return;
             }
 
+            // Validação de estoque
+            if (produto.getEstoqueAtual() < quantidade) {
+                JOptionPane.showMessageDialog(this, "Erro: Estoque insuficiente para o produto " + produto.getDescricao() + ". Estoque atual: " + produto.getEstoqueAtual(), "Erro de Estoque", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
             // Validação de existência do cliente (se um código for inserido)
             Integer codigoCliente = null;
             if (!txtCodigoCliente.getText().trim().isEmpty()) {
@@ -125,6 +131,10 @@ public class TelaCadastroVenda extends JDialog {
             // Criação e registro da venda
             Venda novaVenda = new Venda(codigoCliente, dataVenda, codigoProduto, quantidade, modoPagamento);
             vendaService.cadastrar(novaVenda);
+
+            // Atualiza o estoque do produto
+            produtoService.atualizarEstoque(codigoProduto, -quantidade);
+
             JOptionPane.showMessageDialog(this, "Venda registrada com sucesso!");
 
             if (onSaveCallback != null) {

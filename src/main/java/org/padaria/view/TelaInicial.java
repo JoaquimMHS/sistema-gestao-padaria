@@ -1,9 +1,23 @@
 package org.padaria.view;
 
 import javax.swing.*;
+
+import org.padaria.service.ClienteService;
+import org.padaria.service.CompraService;
+import org.padaria.service.FornecedorService;
+import org.padaria.service.ProdutoService;
+import org.padaria.service.VendaService;
+
 import java.awt.*;
 
 public class TelaInicial extends JFrame {
+
+    private final CompraService compraService = new CompraService();
+    private final FornecedorService fornecedorService = new FornecedorService();
+    private final ProdutoService produtoService = new ProdutoService();
+    private final VendaService vendaService = new VendaService();
+    private final String clientesCSV = "clientes.csv";
+    private final ClienteService clienteService = new ClienteService(clientesCSV);
 
     public TelaInicial() {
         setTitle("Sistema Padaria");
@@ -11,6 +25,16 @@ public class TelaInicial extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
+
+        try {
+            compraService.carregarDados("compras.csv");
+            fornecedorService.carregarDados("fornecedores.csv");
+            produtoService.carregarDados("produtos.csv");
+            vendaService.carregarDados("vendas.csv");
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Erro ao carregar dados: " + e.getMessage(), "Erro",
+                    JOptionPane.ERROR_MESSAGE);
+        }
 
         // Mantém o título no topo
         JLabel titulo = new JLabel("Sistema Padaria", SwingConstants.CENTER);
@@ -53,12 +77,9 @@ public class TelaInicial extends JFrame {
         JMenu menuVendas = new JMenu("Registro de Vendas");
         JMenuItem itemRegistrarVenda = new JMenuItem("Gerenciar Vendas");
 
-        itemRegistrarVenda.addActionListener(e ->
-                new TelaVendas(this).setVisible(true)
-        );
+        itemRegistrarVenda.addActionListener(e -> new TelaVendas(this).setVisible(true));
         menuVendas.add(itemRegistrarVenda);
         menuBar.add(menuVendas);
-
 
         // --- Menu Controle de Contas ---
         JMenu menuContas = new JMenu("Controle de Contas");
@@ -67,8 +88,16 @@ public class TelaInicial extends JFrame {
         JMenuItem itemContasReceber = new JMenuItem("Visualizar Contas a Receber (Clientes)");
 
         itemRegistrarCompra.addActionListener(e -> new TelaCompras(this).setVisible(true));
-        itemContasPagar.addActionListener(e -> JOptionPane.showMessageDialog(this, "Tela de Visualizar Compras (implementar)"));
-        itemContasReceber.addActionListener(e -> JOptionPane.showMessageDialog(this, "Tela de Visualizar Vendas (implementar)"));
+        itemContasPagar.addActionListener(
+                e -> new TelaContasAPagar(this, compraService, fornecedorService, produtoService).setVisible(true));
+        itemContasReceber.addActionListener(e -> {
+            TelaContasAReceber tela = new TelaContasAReceber(
+                    this,
+                    vendaService,
+                    clienteService,
+                    produtoService);
+            tela.setVisible(true);
+        });
 
         menuContas.add(itemRegistrarCompra);
         menuContas.add(itemContasPagar);
