@@ -1,4 +1,3 @@
-// src/main/java/org/padaria/service/ProdutoService.java
 package org.padaria.service;
 
 import java.util.ArrayList;

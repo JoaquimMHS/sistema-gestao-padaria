@@ -1,14 +1,13 @@
 package org.padaria.service;
 
 import org.padaria.model.Cliente;
-import org.padaria.model.IEntity;
 import org.padaria.io.ClienteIO;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class ClienteService implements IEntityService<Cliente> {
-    
+
     private List<Cliente> clientes;
     private ClienteIO clienteIO;
     private String caminhoArquivo;
@@ -23,6 +22,7 @@ public class ClienteService implements IEntityService<Cliente> {
     private void carregarClientes() {
         try {
             this.clientes = clienteIO.lerCSV(this.caminhoArquivo);
+            System.out.println(this.clientes.size() + " clientes carregados com sucesso.");
         } catch (Exception e) {
             System.err.println("Erro ao carregar clientes do arquivo: " + e.getMessage());
         }
@@ -31,6 +31,7 @@ public class ClienteService implements IEntityService<Cliente> {
     private void salvarClientes() {
         try {
             clienteIO.salvarCSV(this.clientes, this.caminhoArquivo);
+            System.out.println("Clientes salvos com sucesso em " + this.caminhoArquivo);
         } catch (Exception e) {
             System.err.println("Erro ao salvar clientes no arquivo: " + e.getMessage());
         }

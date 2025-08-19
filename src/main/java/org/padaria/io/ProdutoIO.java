@@ -1,10 +1,9 @@
-// src/main/java/org/padaria/io/ProdutoIO.java
 package org.padaria.io;
 
 import org.padaria.model.Produto;
+import org.padaria.util.CSVUtil;
 import org.padaria.util.IOExceptionHandler;
 
-import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,37 +12,28 @@ public class ProdutoIO implements ICSVReadable<Produto> {
     @Override
     public List<Produto> lerCSV(String caminhoArquivo) throws IOExceptionHandler {
         List<Produto> produtos = new ArrayList<>();
-        try (BufferedReader br = new BufferedReader(new FileReader(caminhoArquivo))) {
-            br.readLine(); // Pula o cabeçalho
-            String linha;
-            while ((linha = br.readLine()) != null) {
-                produtos.add(parsearLinhaCSV(linha.split(";")));
-            }
-        } catch (IOException e) {
-            IOExceptionHandler.handle("Erro ao ler o arquivo CSV de produtos.", e);
+        List<String[]> linhas = CSVUtil.lerArquivoCSV(caminhoArquivo);
+        for (String[] campos : linhas) {
+            produtos.add(parsearLinhaCSV(campos));
         }
         return produtos;
     }
 
     @Override
     public void salvarCSV(List<Produto> lista, String caminhoArquivo) throws IOExceptionHandler {
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter(caminhoArquivo))) {
-            bw.write("codigo;descricao;estoque_minimo;estoque_atual;valor_custo;percentual_lucro");
-            bw.newLine();
-            for (Produto produto : lista) {
-                String[] campos = gerarLinhaCSV(produto);
-                String linha = String.join(";", campos);
-                bw.write(linha);
-                bw.newLine();
-            }
-        } catch (IOException e) {
-            IOExceptionHandler.handle("Erro ao salvar o arquivo CSV de produtos.", e);
+        String[] cabecalho = { "codigo", "descricao", "estoque_minimo", "estoque_atual", "valor_custo",
+                "percentual_lucro" };
+        List<String[]> dados = new ArrayList<>();
+
+        for (Produto produto : lista) {
+            dados.add(gerarLinhaCSV(produto));
         }
+        CSVUtil.escreverArquivoCSV(caminhoArquivo, dados, cabecalho);
     }
 
     @Override
     public String[] gerarLinhaCSV(Produto entidade) {
-        return new String[]{
+        return new String[] {
                 String.valueOf(entidade.getCodigo()),
                 entidade.getDescricao(),
                 String.valueOf(entidade.getEstoqueMinimo()),

@@ -2,12 +2,10 @@ package org.padaria.service;
 
 import org.padaria.io.FornecedorIO;
 import org.padaria.model.Fornecedor;
-import org.padaria.model.IEntity;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
 
 public class FornecedorService implements IEntityService<Fornecedor> {
 
@@ -32,7 +30,6 @@ public class FornecedorService implements IEntityService<Fornecedor> {
         if (fornecedor == null) {
             throw new IllegalArgumentException("O fornecedor não pode ser nulo.");
         }
-
 
         if (!fornecedor.isValid()) {
             throw new IllegalArgumentException("Dados do fornecedor são inválidos.");
@@ -85,7 +82,8 @@ public class FornecedorService implements IEntityService<Fornecedor> {
             fornecedorExistente.setCNPJ(fornecedorAtualizado.getCNPJ());
             fornecedorExistente.setPessoaContato(fornecedorAtualizado.getPessoaContato());
         } else {
-            throw new IllegalArgumentException("Fornecedor com o código " + fornecedorAtualizado.getCodigo() + " não encontrado.");
+            throw new IllegalArgumentException(
+                    "Fornecedor com o código " + fornecedorAtualizado.getCodigo() + " não encontrado.");
         }
     }
 

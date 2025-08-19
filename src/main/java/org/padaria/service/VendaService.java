@@ -1,4 +1,3 @@
-// src/main/java/org/padaria/service/VendaService.java
 package org.padaria.service;
 
 import org.padaria.io.VendaIO;
@@ -8,8 +7,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-
-
 
 public class VendaService implements IEntityService<Venda> {
     private final VendaIO vendaIO;
@@ -75,7 +72,8 @@ public class VendaService implements IEntityService<Venda> {
 
     public double calcularLucroTotal(ProdutoService produtoService) {
         return vendas.stream()
-                .mapToDouble(v -> v.calcularLucro(produtoService.getPrecoVenda(v.getCodigoProduto()), produtoService.getPrecoCusto(v.getCodigoProduto())))
+                .mapToDouble(v -> v.calcularLucro(produtoService.getPrecoVenda(v.getCodigoProduto()),
+                        produtoService.getPrecoCusto(v.getCodigoProduto())))
                 .sum();
     }
 

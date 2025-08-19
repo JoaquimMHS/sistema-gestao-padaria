@@ -10,9 +10,11 @@ public abstract class Cliente implements IEntity {
     private LocalDate dataCadastro;
     protected TipoCliente tipo;
 
-    public Cliente() {}
+    public Cliente() {
+    }
 
-    public Cliente(int codigo, String nome, String endereco, String telefone, LocalDate dataCadastro, TipoCliente tipo) {
+    public Cliente(int codigo, String nome, String endereco, String telefone, LocalDate dataCadastro,
+            TipoCliente tipo) {
         this.codigo = codigo;
         this.nome = nome;
         this.endereco = endereco;
@@ -33,11 +35,11 @@ public abstract class Cliente implements IEntity {
 
     @Override
     public boolean isValid() {
-        return codigo > 0 && 
-               nome != null && !nome.isEmpty() && 
-               endereco != null && !endereco.isEmpty() && 
-               telefone != null && !telefone.isEmpty() && 
-               dataCadastro != null;
+        return codigo > 0 &&
+                nome != null && !nome.isEmpty() &&
+                endereco != null && !endereco.isEmpty() &&
+                telefone != null && !telefone.isEmpty() &&
+                dataCadastro != null;
     }
 
     // Getters e Setters
@@ -83,7 +85,7 @@ public abstract class Cliente implements IEntity {
 
     @Override
     public String toString() {
-        return "Cliente [codigo=" + codigo + ", nome=" + nome + ", endereco=" + endereco + 
-               ", telefone=" + telefone + ", dataCadastro=" + dataCadastro + ", tipo=" + tipo + "]";
+        return "Cliente [codigo=" + codigo + ", nome=" + nome + ", endereco=" + endereco +
+                ", telefone=" + telefone + ", dataCadastro=" + dataCadastro + ", tipo=" + tipo + "]";
     }
 }

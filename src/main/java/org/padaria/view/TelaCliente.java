@@ -17,45 +17,51 @@ import java.util.stream.Collectors;
 
 public class TelaCliente extends JFrame {
 
+    private final JFrame parent;
     private final ClienteService clienteService;
     private final String arquivoCSV = "clientes.csv";
 
     private JTable tabelaClientes;
     private DefaultTableModel tableModel;
-    private JButton btnAdicionar, btnEditar, btnRemover;
+    private JButton btnAdicionar, btnEditar, btnRemover, btnVoltar;
+
     private JTextField txtPesquisar;
 
-    public TelaCliente() {
+    public TelaCliente(JFrame parent) {
+        this.parent = parent;
         clienteService = new ClienteService(arquivoCSV);
 
         setTitle("Clientes");
-        setSize(900, 550);
+        setSize(850, 500);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
         inicializarComponentes();
         adicionarListeners();
 
-        atualizarTabela();
+        carregarDadosNaTabela(clienteService.listar());
     }
 
     private void inicializarComponentes() {
         JPanel panelTopo = new JPanel(new BorderLayout(10, 10));
         panelTopo.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
+        btnVoltar = new JButton("<- Voltar");
+        panelTopo.add(btnVoltar, BorderLayout.WEST);
+
         txtPesquisar = new JTextField();
         txtPesquisar.setBorder(BorderFactory.createTitledBorder("Pesquisar por Nome"));
         panelTopo.add(txtPesquisar, BorderLayout.CENTER);
 
         btnAdicionar = new JButton("Adicionar Cliente +");
-        btnAdicionar.setBackground(new Color(21, 139, 21));
-        btnAdicionar.setForeground(Color.WHITE);
         panelTopo.add(btnAdicionar, BorderLayout.EAST);
 
-        String[] colunas = {"Código", "Nome", "Tipo", "CPF/CNPJ", "Telefone", "Endereço"};
+        String[] colunas = { "Código", "Nome", "Tipo", "CPF/CNPJ", "Telefone", "Endereço" };
         tableModel = new DefaultTableModel(colunas, 0) {
             @Override
-            public boolean isCellEditable(int row, int column) { return false; }
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
         };
         tabelaClientes = new JTable(tableModel);
         JScrollPane scrollPane = new JScrollPane(tabelaClientes);
@@ -73,17 +79,21 @@ public class TelaCliente extends JFrame {
     }
 
     private void adicionarListeners() {
-        // Salva os dados no arquivo ao fechar a janela
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                // O ClienteService já salva automaticamente após cada operação.
-                // Se não salvasse, a chamada de salvamento viria aqui.
+                parent.setVisible(true);
             }
         });
 
+        btnVoltar.addActionListener(e -> {
+            parent.setVisible(true);
+            dispose();
+        });
+
         btnAdicionar.addActionListener(e -> {
-            TelaCadastroCliente telaCadastro = new TelaCadastroCliente(this, clienteService, this::atualizarTabela, null);
+            TelaCadastroCliente telaCadastro = new TelaCadastroCliente(this, clienteService, this::atualizarTabela,
+                    null);
             telaCadastro.setVisible(true);
         });
 
@@ -92,11 +102,19 @@ public class TelaCliente extends JFrame {
 
         txtPesquisar.getDocument().addDocumentListener(new DocumentListener() {
             @Override
-            public void insertUpdate(DocumentEvent e) { filtrarTabela(); }
+            public void insertUpdate(DocumentEvent e) {
+                filtrarTabela();
+            }
+
             @Override
-            public void removeUpdate(DocumentEvent e) { filtrarTabela(); }
+            public void removeUpdate(DocumentEvent e) {
+                filtrarTabela();
+            }
+
             @Override
-            public void changedUpdate(DocumentEvent e) { filtrarTabela(); }
+            public void changedUpdate(DocumentEvent e) {
+                filtrarTabela();
+            }
         });
     }
 
@@ -112,7 +130,7 @@ public class TelaCliente extends JFrame {
                 tipo = "Pessoa Jurídica";
                 documento = ((PessoaJuridica) c).getCnpj();
             }
-            tableModel.addRow(new Object[]{
+            tableModel.addRow(new Object[] {
                     c.getCodigo(),
                     c.getNome(),
                     tipo,
@@ -125,6 +143,7 @@ public class TelaCliente extends JFrame {
 
     public void atualizarTabela() {
         carregarDadosNaTabela(clienteService.listar());
+        txtPesquisar.setText("");
     }
 
     private void filtrarTabela() {
@@ -132,8 +151,7 @@ public class TelaCliente extends JFrame {
         if (textoBusca.isEmpty()) {
             atualizarTabela();
         } else {
-            List<Cliente> todosClientes = clienteService.listar();
-            List<Cliente> clientesFiltrados = todosClientes.stream()
+            List<Cliente> clientesFiltrados = clienteService.listar().stream()
                     .filter(c -> c.getNome().toLowerCase().contains(textoBusca))
                     .collect(Collectors.toList());
             carregarDadosNaTabela(clientesFiltrados);
@@ -143,23 +161,27 @@ public class TelaCliente extends JFrame {
     private void editarCliente() {
         int selectedRow = tabelaClientes.getSelectedRow();
         if (selectedRow == -1) {
-            JOptionPane.showMessageDialog(this, "Por favor, selecione um cliente na tabela para editar.", "Aviso", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Por favor, selecione um cliente na tabela para editar.", "Aviso",
+                    JOptionPane.WARNING_MESSAGE);
             return;
         }
         int codigo = (int) tableModel.getValueAt(selectedRow, 0);
         Cliente clienteParaEditar = clienteService.buscar(codigo);
 
-        TelaCadastroCliente telaEdicao = new TelaCadastroCliente(this, clienteService, this::atualizarTabela, clienteParaEditar);
+        TelaCadastroCliente telaEdicao = new TelaCadastroCliente(this, clienteService, this::atualizarTabela,
+                clienteParaEditar);
         telaEdicao.setVisible(true);
     }
 
     private void removerCliente() {
         int selectedRow = tabelaClientes.getSelectedRow();
         if (selectedRow == -1) {
-            JOptionPane.showMessageDialog(this, "Por favor, selecione um cliente na tabela para remover.", "Aviso", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Por favor, selecione um cliente na tabela para remover.", "Aviso",
+                    JOptionPane.WARNING_MESSAGE);
             return;
         }
-        int resposta = JOptionPane.showConfirmDialog(this, "Tem certeza que deseja remover o cliente selecionado?", "Confirmação de Remoção", JOptionPane.YES_NO_OPTION);
+        int resposta = JOptionPane.showConfirmDialog(this, "Tem certeza que deseja remover o cliente selecionado?",
+                "Confirmação de Remoção", JOptionPane.YES_NO_OPTION);
         if (resposta == JOptionPane.YES_OPTION) {
             int codigo = (int) tableModel.getValueAt(selectedRow, 0);
             if (clienteService.remover(codigo)) {

@@ -50,7 +50,9 @@ public class TelaInicial extends JFrame {
         cardLayout = new CardLayout();
         contentPanel = new JPanel(cardLayout);
 
-        JLabel mensagem = new JLabel("<html><div style='text-align: center;'>Bem vindo ao Sistema<br/>feito por Eliaquim, Felicio, Joaquim, João Pedro e Nicolas</div></html>", SwingConstants.CENTER);
+        JLabel mensagem = new JLabel(
+                "<html><div style='text-align: center;'>Bem vindo ao Sistema<br/>feito por Eliaquim, Felicio, Joaquim, João Pedro e Nicolas</div></html>",
+                SwingConstants.CENTER);
         mensagem.setFont(new Font("Comic Sans MS", Font.PLAIN, 20));
         JPanel homePanel = new JPanel(new BorderLayout());
         homePanel.add(mensagem, BorderLayout.CENTER);
@@ -58,36 +60,30 @@ public class TelaInicial extends JFrame {
         add(contentPanel, BorderLayout.CENTER);
 
         btnClientes.addActionListener(e -> {
-            TelaCliente telaClientes = new TelaCliente();
+            TelaCliente telaClientes = new TelaCliente(this);
             telaClientes.setVisible(true);
         });
         btnFornecedores.addActionListener(e -> {
             TelaFornecedor telaFornecedor = new TelaFornecedor(this);
             telaFornecedor.setVisible(true);
-            this.setVisible(false);
         });
         btnProdutos.addActionListener(e -> {
             TelaProduto telaProdutos = new TelaProduto(this);
             telaProdutos.setVisible(true);
-
-            this.setVisible(false);
         });
         btnCompras.addActionListener(e -> {
             TelaCompras telaCompras = new TelaCompras(this);
             telaCompras.setVisible(true);
-            this.setVisible(false);
         });
 
         btnVendas.addActionListener(e -> {
             TelaVendas telaVendas = new TelaVendas(this);
             telaVendas.setVisible(true);
-            this.setVisible(false);
         });
 
         btnRelatorios.addActionListener(e -> {
             TelaRelatorios telaRelatorios = new TelaRelatorios(this);
             telaRelatorios.setVisible(true);
-            this.setVisible(false);
         });
 
         btnSair.addActionListener(e -> System.exit(0));

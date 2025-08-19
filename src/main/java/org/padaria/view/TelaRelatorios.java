@@ -36,7 +36,8 @@ public class TelaRelatorios extends JFrame {
             vendaService.carregarDados("vendas.csv");
             produtoService.carregarDados("produtos.csv");
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Erro ao carregar dados para os relatórios: " + e.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Erro ao carregar dados para os relatórios: " + e.getMessage(), "Erro",
+                    JOptionPane.ERROR_MESSAGE);
         }
 
         setTitle("Geração de Relatórios Mensais");
@@ -79,9 +80,11 @@ public class TelaRelatorios extends JFrame {
                 RelatorioVendasProduto relatorio = new RelatorioVendasProduto(vendaService, produtoService);
                 List<String[]> dados = relatorio.processarDados();
                 String[] cabecalho = relatorio.getCabecalho().split(";");
-                new TelaVisualizacaoRelatorio(this, "Relatório de Vendas por Produto", dados, cabecalho, relatorio).setVisible(true);
+                new TelaVisualizacaoRelatorio(this, "Relatório de Vendas por Produto", dados, cabecalho, relatorio)
+                        .setVisible(true);
             } catch (Exception ex) {
-                JOptionPane.showMessageDialog(this, "Erro ao processar dados do relatório: " + ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Erro ao processar dados do relatório: " + ex.getMessage(), "Erro",
+                        JOptionPane.ERROR_MESSAGE);
             }
         });
 
@@ -90,9 +93,11 @@ public class TelaRelatorios extends JFrame {
                 RelatorioVendasPagamento relatorio = new RelatorioVendasPagamento(vendaService, produtoService);
                 List<String[]> dados = relatorio.processarDados();
                 String[] cabecalho = relatorio.getCabecalho().split(";");
-                new TelaVisualizacaoRelatorio(this, "Relatório de Vendas por Pagamento", dados, cabecalho, relatorio).setVisible(true);
+                new TelaVisualizacaoRelatorio(this, "Relatório de Vendas por Pagamento", dados, cabecalho, relatorio)
+                        .setVisible(true);
             } catch (Exception ex) {
-                JOptionPane.showMessageDialog(this, "Erro ao processar dados do relatório: " + ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Erro ao processar dados do relatório: " + ex.getMessage(), "Erro",
+                        JOptionPane.ERROR_MESSAGE);
             }
         });
     }

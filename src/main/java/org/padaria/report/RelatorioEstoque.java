@@ -1,4 +1,3 @@
-// src/main/java/org/padaria/report/RelatorioEstoque.java
 package org.padaria.report;
 
 import org.padaria.model.Produto;
@@ -37,7 +36,7 @@ public class RelatorioEstoque implements IRelatorio {
         return produtoService.listar().stream()
                 .map(p -> {
                     String observacao = p.getEstoqueAtual() < p.getEstoqueMinimo() ? "COMPRAR MAIS" : "";
-                    return new String[]{
+                    return new String[] {
                             String.valueOf(p.getCodigo()),
                             p.getDescricao(),
                             String.valueOf(p.getEstoqueAtual()),
