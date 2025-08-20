@@ -21,8 +21,8 @@ public class ProdutoIO implements ICSVReadable<Produto> {
 
     @Override
     public void salvarCSV(List<Produto> lista, String caminhoArquivo) throws IOExceptionHandler {
-        String[] cabecalho = { "codigo", "descricao", "estoque_minimo", "estoque_atual", "valor_custo",
-                "percentual_lucro" };
+        String[] cabecalho = { "código", "descrição", "estoque mínimo", "estoque atual", "valor de custo",
+                "percentual de lucro" };
         List<String[]> dados = new ArrayList<>();
 
         for (Produto produto : lista) {

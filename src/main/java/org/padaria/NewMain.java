@@ -11,6 +11,12 @@ import org.padaria.ui.MenuPrincipal;
 import java.util.Scanner;
 
 public class NewMain {
+    /**
+     * Essa clase inicia o programa com interface de linha de comando pedindo os
+     * nomes dos arquivos
+     * 
+     * @param args
+     */
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
 
@@ -52,7 +58,7 @@ public class NewMain {
         System.out.println("Fornecedores: " + arquivoFornecedores);
         System.out.println("Compras: " + arquivoCompras);
         System.out.println("Vendas: " + arquivoVendas);
-        System.out.println("===============================\n");
+        System.out.println("==================\n");
 
         // Inicializar serviços com os arquivos informados
         ClienteService clienteService = new ClienteService(arquivoClientes);

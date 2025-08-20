@@ -12,7 +12,8 @@ public class Produto implements IEntity {
     public Produto() {
     }
 
-    public Produto(int codigo, String descricao, int estoqueMinimo, int estoqueAtual, double valorCusto, int percentualLucro) {
+    public Produto(int codigo, String descricao, int estoqueMinimo, int estoqueAtual, double valorCusto,
+            int percentualLucro) {
         this.codigo = codigo;
         this.descricao = descricao;
         this.estoqueMinimo = estoqueMinimo;
@@ -23,13 +24,14 @@ public class Produto implements IEntity {
 
     @Override
     public boolean isValid() {
-    return this.codigo > 0 && this.descricao != null && !this.descricao.trim().isEmpty();
+        return this.codigo > 0 && this.descricao != null && !this.descricao.trim().isEmpty();
     }
 
     @Override
     public int getCodigo() {
         return codigo;
     }
+
     @Override
     public void setCodigo(int codigo) {
         this.codigo = codigo;
@@ -81,11 +83,10 @@ public class Produto implements IEntity {
 
     @Override
     public String toString() {
-        return "Produto {" +
+        return "Produto: " +
                 "código=" + codigo +
                 ", descrição='" + descricao + '\'' +
                 ", estoqueAtual=" + estoqueAtual +
-                ", valorVenda=" + String.format("R$%.2f", calcularValorVenda()) +
-                '}';
+                ", valorVenda=" + String.format("R$%.2f", calcularValorVenda());
     }
 }

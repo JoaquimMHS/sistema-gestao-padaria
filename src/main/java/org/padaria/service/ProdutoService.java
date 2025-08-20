@@ -89,7 +89,6 @@ public class ProdutoService implements IEntityService<Produto> {
         return this.produtos.removeIf(p -> p.getCodigo() == id);
     }
 
-    // Métodos para obtenção de dados do produto
     public double getPrecoVenda(int codigoProduto) {
         Produto produto = buscar(codigoProduto);
         return produto != null ? produto.calcularValorVenda() : 0.0;

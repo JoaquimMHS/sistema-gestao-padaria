@@ -4,6 +4,7 @@ import org.padaria.model.ModoPagamento;
 import org.padaria.model.Venda;
 import org.padaria.service.ProdutoService;
 import org.padaria.service.VendaService;
+import org.padaria.util.IOExceptionHandler;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -50,7 +51,6 @@ public class RelatorioVendasPagamento implements IRelatorio {
 
     @Override
     public void gerar(String nomeArquivo) throws IOException {
-        System.out.println("Gerando relatório de vendas por forma de pagamento...");
         try (PrintWriter writer = new PrintWriter(new FileWriter(nomeArquivo))) {
             String[] cabecalho = getCabecalho();
             writer.println(String.join(";", cabecalho));
@@ -60,8 +60,7 @@ public class RelatorioVendasPagamento implements IRelatorio {
                 writer.println(String.join(";", linha));
             }
         } catch (IOException e) {
-            System.err.println("Erro ao gerar relatório: " + e.getMessage());
-            System.exit(1);
+            IOExceptionHandler.handle("Erro ao gerar o relatório", e);
         }
         System.out.println("Relatório gerado com sucesso em: " + nomeArquivo);
     }
@@ -71,14 +70,14 @@ public class RelatorioVendasPagamento implements IRelatorio {
         List<Venda> vendas = vendaService.listar();
         List<RelatorioItemPagamento> itens = new ArrayList<>();
 
-        // Processa cada venda
+        // caminha pela lista de vendas
         for (Venda venda : vendas) {
             ModoPagamento modoPagamento = venda.getModoPagamento();
             int codigoProduto = venda.getCodigoProduto();
             double precoVenda = produtoService.getPrecoVenda(codigoProduto);
             double precoCusto = produtoService.getPrecoCusto(codigoProduto);
 
-            // Busca se já existe um item para este modo de pagamento
+            // busca se já existe um item para este modo de pagamento
             RelatorioItemPagamento itemExistente = null;
             for (RelatorioItemPagamento item : itens) {
                 if (item.getModoPagamento() == modoPagamento) {
@@ -87,17 +86,15 @@ public class RelatorioVendasPagamento implements IRelatorio {
                 }
             }
 
-            // Se não existe, cria novo item
             if (itemExistente == null) {
                 itemExistente = new RelatorioItemPagamento(modoPagamento);
                 itens.add(itemExistente);
             }
 
-            // Adiciona os valores da venda
             itemExistente.adicionarVenda(precoVenda, precoCusto, venda.getQuantidade());
         }
 
-        // Ordena por lucro (decrescente) e depois por caractere do modo de pagamento
+        // ordenado por lucro e depois por caractere do modo de pagamento
         itens.sort((a, b) -> {
             int comparacaoLucro = Double.compare(b.getLucro(), a.getLucro());
             if (comparacaoLucro != 0)
@@ -107,7 +104,7 @@ public class RelatorioVendasPagamento implements IRelatorio {
                     b.getModoPagamento().getCaracter());
         });
 
-        // Converte para array de strings
+        // coloca no csv como array de strings
         List<String[]> resultado = new ArrayList<>();
         for (RelatorioItemPagamento item : itens) {
             resultado.add(new String[] {

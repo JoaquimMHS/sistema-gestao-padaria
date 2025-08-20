@@ -89,12 +89,11 @@ public class Venda implements IEntity {
 
     @Override
     public String toString() {
-        return "Venda{" +
-                ", codigoCliente=" + (codigoCliente != null ? codigoCliente : "N/A") +
+        return "Venda" +
+                "codigoCliente=" + (codigoCliente != null ? codigoCliente : "N/A") +
                 ", dataVenda=" + dataVenda +
                 ", codigoProduto=" + codigoProduto +
                 ", quantidade=" + quantidade +
-                ", modoPagamento=" + modoPagamento +
-                '}';
+                ", modoPagamento=" + modoPagamento;
     }
 }

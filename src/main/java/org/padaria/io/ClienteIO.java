@@ -30,8 +30,8 @@ public class ClienteIO implements ICSVReadable<Cliente> {
     @Override
     public void salvarCSV(List<Cliente> lista, String caminhoArquivo) throws IOExceptionHandler {
         List<String[]> dados = new ArrayList<>();
-        String[] cabecalho = new String[] { "codigo", "nome", "endereco", "telefone", "data de cadastro",
-                "tipo de cliente", "cpf ou cnpj", "numero de inscricao estadual" };
+        String[] cabecalho = new String[] { "código", "nome", "endereço", "telefone", "data de cadastro",
+                "tipo de cliente", "cpf ou cnpj", "número de inscrição estadual" };
         for (Cliente cliente : lista) {
             dados.add(gerarLinhaCSV(cliente));
         }

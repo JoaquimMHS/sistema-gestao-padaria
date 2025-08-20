@@ -1,4 +1,3 @@
-// src/main/java/org/padaria/Main.java
 package org.padaria;
 
 import org.padaria.service.ClienteService;
@@ -11,6 +10,11 @@ import org.padaria.ui.MenuPrincipal;
 import java.util.Scanner;
 
 public class Main {
+    /**
+     * Essa clase inicia o programa com interface de linha de comando
+     * 
+     * @param args
+     */
     public static void main(String[] args) {
         String arquivoClientes = "clientes.csv";
         ClienteService clienteService = new ClienteService(arquivoClientes);

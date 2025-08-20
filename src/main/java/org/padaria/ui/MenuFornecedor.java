@@ -76,7 +76,6 @@ public class MenuFornecedor {
         System.out.print("Pessoa de Contato: ");
         String pessoaContato = scanner.nextLine();
 
-        // Linha corrigida para usar o construtor padrão e setters
         Fornecedor novoFornecedor = new Fornecedor();
         novoFornecedor.setNome(nome);
         novoFornecedor.setCNPJ(cnpj);

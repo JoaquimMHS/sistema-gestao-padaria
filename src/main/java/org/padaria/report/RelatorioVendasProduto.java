@@ -3,6 +3,7 @@ package org.padaria.report;
 import org.padaria.model.Venda;
 import org.padaria.service.ProdutoService;
 import org.padaria.service.VendaService;
+import org.padaria.util.IOExceptionHandler;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -54,7 +55,6 @@ public class RelatorioVendasProduto implements IRelatorio {
 
     @Override
     public void gerar(String nomeArquivo) throws IOException {
-        System.out.println("Gerando relatório de vendas por produto...");
 
         try (PrintWriter writer = new PrintWriter(new FileWriter(nomeArquivo))) {
             String[] cabecalho = getCabecalho();
@@ -65,10 +65,9 @@ public class RelatorioVendasProduto implements IRelatorio {
                 writer.println(String.join(";", linha));
             }
         } catch (IOException e) {
-            System.err.println("Erro ao gerar relatório: " + e.getMessage());
-            System.exit(1);
+            IOExceptionHandler.handle("Erro ao gerar o relatório", e);
         }
-        System.out.println("Relatório gerado com sucesso em: " + nomeArquivo);
+        System.out.println("Relatório gerado em: " + nomeArquivo);
     }
 
     @Override
@@ -76,14 +75,13 @@ public class RelatorioVendasProduto implements IRelatorio {
         List<Venda> vendas = vendaService.listar();
         List<RelatorioItemProduto> itens = new ArrayList<>();
 
-        // Processa cada venda
         for (Venda venda : vendas) {
             int codigoProduto = venda.getCodigoProduto();
             String descricao = produtoService.getDescricao(codigoProduto);
             double precoVenda = produtoService.getPrecoVenda(codigoProduto);
             double precoCusto = produtoService.getPrecoCusto(codigoProduto);
 
-            // Busca se já existe um item para este produto
+            // Busca o produto
             RelatorioItemProduto itemExistente = null;
             for (RelatorioItemProduto item : itens) {
                 if (item.getCodigoProduto() == codigoProduto) {
@@ -92,23 +90,22 @@ public class RelatorioVendasProduto implements IRelatorio {
                 }
             }
 
-            // Se não existe, cria novo item
+            // cria novo item se não existir
             if (itemExistente == null) {
                 itemExistente = new RelatorioItemProduto(codigoProduto, descricao);
                 itens.add(itemExistente);
             }
 
-            // Adiciona os valores da venda
             itemExistente.adicionarVenda(precoVenda, precoCusto, venda.getQuantidade());
         }
 
-        // Ordena por lucro (decrescente) e depois por código do produto
+        // ordenação
         itens.sort((a, b) -> {
             int comparacaoLucro = Double.compare(b.getLucro(), a.getLucro());
             return comparacaoLucro != 0 ? comparacaoLucro : Integer.compare(a.getCodigoProduto(), b.getCodigoProduto());
         });
 
-        // Converte para array de strings
+        // coloca no csv como array de strings
         List<String[]> resultado = new ArrayList<>();
         for (RelatorioItemProduto item : itens) {
             resultado.add(new String[] {

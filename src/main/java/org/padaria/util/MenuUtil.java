@@ -39,11 +39,11 @@ public class MenuUtil {
         while (true) {
             try {
                 double valor = scanner.nextDouble();
-                scanner.nextLine(); // Consome a quebra de linha
+                scanner.nextLine();
                 return valor;
             } catch (InputMismatchException e) {
                 System.out.print("Entrada inválida. Digite um número decimal: ");
-                scanner.nextLine(); // Limpa o buffer do scanner
+                scanner.nextLine();
             }
         }
     }

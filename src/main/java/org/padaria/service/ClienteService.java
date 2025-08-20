@@ -24,7 +24,7 @@ public class ClienteService implements IEntityService<Cliente> {
         try {
             this.clientes = clienteIO.lerCSV(this.caminhoArquivo);
         } catch (Exception e) {
-            System.err.println("Erro ao carregar clientes do arquivo: " + e.getMessage());
+            System.err.println(e.getMessage());
         }
     }
 
@@ -32,7 +32,7 @@ public class ClienteService implements IEntityService<Cliente> {
         try {
             clienteIO.salvarCSV(this.clientes, this.caminhoArquivo);
         } catch (Exception e) {
-            System.err.println("Erro ao salvar clientes no arquivo: " + e.getMessage());
+            System.err.println("Erro ao salvar clientes: " + e.getMessage());
         }
     }
 
@@ -50,7 +50,7 @@ public class ClienteService implements IEntityService<Cliente> {
                 this.clientes.add(entidade);
                 salvarClientes();
             } else {
-                System.err.println("Cliente inválido! Verifique os dados.");
+                System.err.println("Verifique os dados");
             }
         }
     }

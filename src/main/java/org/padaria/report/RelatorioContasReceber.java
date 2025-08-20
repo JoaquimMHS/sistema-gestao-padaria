@@ -53,11 +53,10 @@ public class RelatorioContasReceber implements IRelatorio {
             // Encontra todas as vendas fiado deste cliente
             for (Venda venda : vendasFiado) {
                 if (venda.getCodigoCliente() == cliente.getCodigo()) {
-                    // Encontra o produto correspondente
                     for (Produto produto : produtos) {
                         if (produto.getCodigo() == venda.getCodigoProduto()) {
                             totalReceber += produto.calcularValorVenda() * venda.getQuantidade();
-                            break; // Produto encontrado, sai do loop interno
+                            break;
                         }
                     }
                 }
@@ -68,7 +67,6 @@ public class RelatorioContasReceber implements IRelatorio {
                 String[] linha = new String[6];
                 linha[0] = cliente.getNome();
 
-                // Determina tipo e documento do cliente
                 if (cliente.getTipo() == TipoCliente.PESSOA_FISICA && cliente instanceof PessoaFisica) {
                     linha[1] = "F";
                     linha[2] = ((PessoaFisica) cliente).getCpf();
