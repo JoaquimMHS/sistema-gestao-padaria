@@ -3,3 +3,4 @@ codigo;descricao;estoque_minimo;estoque_atual;valor_custo;percentual_lucro
 2;nada;10;10;10.0;10
 3;aaa;10;10;10.0;10
 4;ei;2;1;10.0;10
+5;novo;10;10;10.0;10

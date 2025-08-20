@@ -25,7 +25,7 @@ public class CompraIO implements ICSVReadable<Compra> {
 
     @Override
     public void salvarCSV(List<Compra> lista, String caminhoArquivo) throws IOExceptionHandler {
-        String[] cabecalho = { "numero_nota_fiscal", "codigo_fornecedor", "data_compra", "codigo_produto",
+        String[] cabecalho = { "numero da nota fiscal", "código do fornecedor", "data compra", "código do produto",
                 "quantidade" };
         List<String[]> dados = new ArrayList<>();
         for (Compra compra : lista) {

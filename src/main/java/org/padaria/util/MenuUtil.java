@@ -1,10 +1,10 @@
 package org.padaria.util;
 
 import java.util.Scanner;
+import java.util.InputMismatchException;
 import java.util.List;
 
 public class MenuUtil {
-    // Métodos auxiliares para exibição de menus
 
     private static final Scanner sc = new Scanner(System.in);
 
@@ -23,6 +23,28 @@ public class MenuUtil {
     }
 
     public static int lerOpcao(Scanner scanner) {
-        return 0;
+        while (true) {
+            try {
+                int opcao = scanner.nextInt();
+                scanner.nextLine();
+                return opcao;
+            } catch (InputMismatchException e) {
+                System.out.print("Entrada inválida. Digite um número: ");
+                scanner.nextLine();
+            }
+        }
+    }
+
+    public static double lerDouble(Scanner scanner) {
+        while (true) {
+            try {
+                double valor = scanner.nextDouble();
+                scanner.nextLine();
+                return valor;
+            } catch (InputMismatchException e) {
+                System.out.print("Entrada inválida. Digite um número decimal: ");
+                scanner.nextLine();
+            }
+        }
     }
 }

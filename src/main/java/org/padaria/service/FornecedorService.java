@@ -35,7 +35,7 @@ public class FornecedorService implements IEntityService<Fornecedor> {
             throw new IllegalArgumentException("Dados do fornecedor são inválidos.");
         }
 
-        // Verifica se já existe um fornecedor com o mesmo código.
+        // Verifica se já existe um fornecedor com o mesmo código
         if (this.fornecedores.stream().anyMatch(f -> f.getCodigo() == fornecedor.getCodigo())) {
             throw new IllegalArgumentException("Já existe um fornecedor com o código " + fornecedor.getCodigo() + ".");
         }
@@ -68,14 +68,14 @@ public class FornecedorService implements IEntityService<Fornecedor> {
             throw new IllegalArgumentException("Dados do fornecedor para atualização são inválidos.");
         }
 
-        // Busca o fornecedor existente na lista pelo código.
+        // busca o fornecedor
         Optional<Fornecedor> fornecedorExistenteOpt = this.fornecedores.stream()
                 .filter(f -> f.getCodigo() == fornecedorAtualizado.getCodigo())
                 .findFirst();
 
+        // atualiza o fornecedor que já está na lista
         if (fornecedorExistenteOpt.isPresent()) {
             Fornecedor fornecedorExistente = fornecedorExistenteOpt.get();
-            // Atualiza os dados do objeto que já está na lista.
             fornecedorExistente.setNome(fornecedorAtualizado.getNome());
             fornecedorExistente.setEndereco(fornecedorAtualizado.getEndereco());
             fornecedorExistente.setTelefone(fornecedorAtualizado.getTelefone());
@@ -89,7 +89,6 @@ public class FornecedorService implements IEntityService<Fornecedor> {
 
     @Override
     public boolean remover(int codigo) {
-
         return this.fornecedores.removeIf(f -> f.getCodigo() == codigo);
     }
 }

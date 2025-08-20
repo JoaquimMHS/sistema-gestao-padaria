@@ -12,6 +12,7 @@ import org.padaria.model.Produto;
 import org.padaria.service.CompraService;
 import org.padaria.service.FornecedorService;
 import org.padaria.service.ProdutoService;
+import org.padaria.util.IOExceptionHandler;
 
 public class RelatorioContasPagar implements IRelatorio {
 
@@ -38,9 +39,7 @@ public class RelatorioContasPagar implements IRelatorio {
                 writer.println(String.join(";", linha));
             }
         } catch (IOException e) {
-            System.err.println("Erro ao gerar relatório de contas a pagar: " + e.getMessage());
-            System.out.println("Erro de I/O.");
-            System.exit(1);
+            IOExceptionHandler.handle("Erro ao gerar o relatório", e);
         }
     }
 

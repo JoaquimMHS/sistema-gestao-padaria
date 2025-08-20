@@ -81,12 +81,11 @@ public class Compra implements IEntity {
 
     @Override
     public String toString() {
-        return "Compra{" +
+        return "Compra: " +
                 "numeroNotaFiscal=" + numeroNotaFiscal +
                 ", codigoFornecedor=" + codigoFornecedor +
                 ", dataCompra=" + dataCompra +
                 ", codigoProduto=" + codigoProduto +
-                ", quantidade=" + quantidade +
-                '}';
+                ", quantidade=" + quantidade;
     }
 }

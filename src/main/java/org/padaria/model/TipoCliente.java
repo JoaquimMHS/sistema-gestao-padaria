@@ -26,6 +26,6 @@ public enum TipoCliente {
                 return tipo;
             }
         }
-        throw new IllegalArgumentException("Código de tipo de cliente inválido: " + codigo);
+        throw new IllegalArgumentException("tipo de cliente inválido: " + codigo);
     }
 }

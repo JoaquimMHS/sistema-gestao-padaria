@@ -60,7 +60,6 @@ public class VendaService implements IEntityService<Venda> {
         return vendas.removeIf(v -> v.getCodigo() == codigo);
     }
 
-    // Métodos Específicos
     public double calcularReceitaTotal(ProdutoService produtoService) {
         return vendas.stream()
                 .mapToDouble(v -> v.calcularValorVenda(produtoService.getPrecoVenda(v.getCodigoProduto())))

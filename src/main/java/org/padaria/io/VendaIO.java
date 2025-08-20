@@ -5,7 +5,6 @@ import org.padaria.model.Venda;
 import org.padaria.util.CSVUtil;
 import org.padaria.util.IOExceptionHandler;
 
-import java.io.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +26,8 @@ public class VendaIO implements ICSVReadable<Venda> {
 
     @Override
     public void salvarCSV(List<Venda> lista, String caminhoArquivo) throws IOExceptionHandler {
-        String[] cabecalho = { "codigo_cliente", "data_venda", "codigo_produto", "quantidade", "modo_pagamento" };
+        String[] cabecalho = { "código do cliente", "data de venda", "código do produto", "quantidade",
+                "modo de pagamento" };
         List<String[]> dados = new ArrayList<>();
 
         for (Venda venda : lista) {

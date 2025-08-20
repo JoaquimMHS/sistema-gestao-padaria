@@ -11,8 +11,8 @@ public class PessoaJuridica extends Cliente {
         this.tipo = TipoCliente.PESSOA_JURIDICA;
     }
 
-    public PessoaJuridica(int codigo, String nome, String endereco, String telefone, 
-                         LocalDate dataCadastro, String cnpj, int inscricaoEstadual) {
+    public PessoaJuridica(int codigo, String nome, String endereco, String telefone,
+            LocalDate dataCadastro, String cnpj, int inscricaoEstadual) {
         super(codigo, nome, endereco, telefone, dataCadastro, TipoCliente.PESSOA_JURIDICA);
         this.cnpj = cnpj;
         this.inscricaoEstadual = inscricaoEstadual;
@@ -41,7 +41,7 @@ public class PessoaJuridica extends Cliente {
 
     @Override
     public String toString() {
-        return super.toString() + " PessoaJuridica [cnpj=" + cnpj + 
-               ", inscricaoEstadual=" + inscricaoEstadual + "]";
+        return super.toString() + " PessoaJuridica [cnpj=" + cnpj +
+                ", Inscrição Estadual=" + inscricaoEstadual + "]";
     }
 }

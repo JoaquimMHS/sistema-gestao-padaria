@@ -4,13 +4,12 @@ import java.io.*;
 import java.util.*;
 
 public class CSVUtil {
-//Métodos para parsing de CSV  -  Le e Escreve o Arquivo CSV
-//Tratamento de separadores (;)
-//Conversão de tipos
+    // Métodos para parsing de CSV - Le e Escreve o Arquivo CSV
+    // Tratamento de separadores (;)
 
     public static final String SEPARADOR = ";";
 
-    public static List<String[]> lerArquivoCSV(String caminho){
+    public static List<String[]> lerArquivoCSV(String caminho) {
         List<String[]> linhas = new ArrayList<>();
         try (BufferedReader reader = new BufferedReader(new FileReader(caminho))) {
             String linha;
@@ -31,7 +30,7 @@ public class CSVUtil {
                 writer.println(String.join(SEPARADOR, linha));
             }
         } catch (IOException e) {
-            IOExceptionHandler.handle("Erro ao ler o arquivo CSV de vendas.", e);
+            IOExceptionHandler.handle("Erro ao escrever o arquivo CSV de vendas.", e);
         }
     }
 }

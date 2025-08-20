@@ -1,10 +1,8 @@
 package org.padaria.view;
 
 import java.awt.BorderLayout;
-import java.awt.FlowLayout;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.util.Collections;
 import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -14,15 +12,12 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
 import org.padaria.model.Compra;
 import org.padaria.service.CompraService;
 import org.padaria.service.FornecedorService;
 import org.padaria.service.ProdutoService;
 
-// ...existing code...
 public class TelaCompras extends JFrame {
 
     private final JFrame parent;

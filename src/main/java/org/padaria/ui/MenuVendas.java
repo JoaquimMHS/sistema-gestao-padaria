@@ -1,4 +1,3 @@
-// src/main/java/org/padaria/ui/MenuVendas.java
 package org.padaria.ui;
 
 import org.padaria.model.ModoPagamento;
@@ -33,14 +32,30 @@ public class MenuVendas {
             opcao = MenuUtil.lerOpcao(scanner);
 
             switch (opcao) {
-                case 1: registrarVenda(); break;
-                case 2: listarVendas(); break;
-                case 3: buscarVenda(); break;
-                case 4: listarVendasCliente(); break;
-                case 5: listarVendasProduto(); break;
-                case 6: listarVendasPagamento(); break;
-                case 0: System.out.println("Voltando ao Menu Principal."); break;
-                default: System.out.println("Opção inválida. Tente novamente."); break;
+                case 1:
+                    registrarVenda();
+                    break;
+                case 2:
+                    listarVendas();
+                    break;
+                case 3:
+                    buscarVenda();
+                    break;
+                case 4:
+                    listarVendasCliente();
+                    break;
+                case 5:
+                    listarVendasProduto();
+                    break;
+                case 6:
+                    listarVendasPagamento();
+                    break;
+                case 0:
+                    System.out.println("Voltando ao Menu Principal.");
+                    break;
+                default:
+                    System.out.println("Opção inválida. Tente novamente.");
+                    break;
             }
         } while (opcao != 0);
     }

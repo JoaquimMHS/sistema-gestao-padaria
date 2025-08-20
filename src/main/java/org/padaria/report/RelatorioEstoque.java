@@ -1,6 +1,7 @@
 package org.padaria.report;
 
 import org.padaria.service.ProdutoService;
+import org.padaria.util.IOExceptionHandler;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -27,8 +28,7 @@ public class RelatorioEstoque implements IRelatorio {
                 writer.println(String.join(";", linha));
             }
         } catch (IOException e) {
-            System.out.println("Erro de I/O.");
-            System.exit(1);
+            IOExceptionHandler.handle("Erro ao gerar o relatório", e);
         }
         System.out.println("Relatório de estoque gerado em: " + nomeArquivo);
     }
